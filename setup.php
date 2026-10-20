@@ -84,7 +84,7 @@ foreach ( [
 	'car-wraps'       => [ 'Car Wraps & Graphics', 'Full and partial wraps, bonnet and roof wraps, windscreen banners, motorbike graphics and fleet branding.' ],
 	'tints'           => [ 'Headlight & Window Tints', 'Smoked headlight and taillight film, yellow fog-light tint and chameleon window tint, fitted at our workshop.' ],
 	'tshirt-printing' => [ 'T-Shirt & Apparel Printing', 'Your logo or design printed on T-shirts, from one shirt to a full team or company batch.' ],
-	'large-format'    => [ 'Large Format & Digital Printing', 'Banners, posters, wall graphics, booklets and documents, printed in-house on our wide-format printer.' ],
+	'large-format'    => [ 'Digital & Large Format Printing', 'Business cards, flyers, certificates, banners, posters, wall graphics and booklets, printed in-house on our own printers.' ],
 	'tools-care'      => [ 'Tools & Care', 'Squeegees and microfiber cloths for fitting and looking after vinyl and tint.' ],
 ] as $slug => [ $name, $desc ] ) {
 	$t = term_exists( $slug, 'product_cat' ) ?: wp_insert_term( $name, 'product_cat', [ 'slug' => $slug, 'description' => $desc ] );
@@ -205,6 +205,18 @@ $products = [
 		'upsells' => [ 'microfiber-cloth-pack' ],
 	],
 	[
+		'slug' => 'dome-stickers', 'name' => 'Dome Stickers (3D Resin)', 'cats' => [ 'vinyl-decals' ],
+		'badge' => '3D Dome Stickers', 'life' => '3+ yr outdoor rating', 'illustration' => true,
+		'short' => 'Your logo printed and topped with a clear, raised resin dome: glossy, 3D and tough. For cars, bikes, products and giveaways.',
+		'desc' => 'Dome stickers (domestickers) are printed vinyl stickers coated with a clear polyurethane resin that sets into a raised, glossy, slightly flexible dome. They feel premium, resist scratches and weather, and make logos pop on cars, bikes, helmets, phones, appliances and product packaging. Send your logo on WhatsApp and we send a proof before printing.',
+		'attr' => 'Quantity', 'options' => [ '50 stickers' => 2500, '100 stickers' => 4500, '250 stickers' => 10000 ],
+		'attr2' => 'Size', 'options2' => [ 'Up to 5 cm', 'Up to 8 cm' ], 'add2' => [ 'Up to 8 cm' => 50 ],
+		'finishes' => [ 'gloss' ],
+		'specs' => [ 'Material' => 'Printed vinyl with a clear polyurethane resin dome', 'Shapes' => 'Round, square, oval or cut to your logo', 'Feel' => 'Raised 3D gloss, slightly flexible', 'Outdoor life' => '3+ years', 'Proof' => 'Sent on WhatsApp before printing' ],
+		'install' => [ 'Clean the surface with alcohol and let it dry.', 'Peel and press down firmly from the centre outwards.', 'Avoid bending them sharply; the dome flexes but can crack if folded.' ],
+		'upsells' => [ 'custom-holographic-logo-stickers' ],
+	],
+	[
 		'slug' => 'side-window-sticker-set', 'name' => 'Side Window Sticker Set', 'cats' => [ 'vinyl-decals' ],
 		'badge' => 'Automotive Vinyl', 'life' => '2–3 yr outdoor rating',
 		'short' => 'A ready-made set of car-culture stickers for a quarter window, like the "STANCE" set in the photo.',
@@ -320,10 +332,44 @@ $products = [
 		'short' => 'Banners, posters and wall graphics printed in-house on our wide-format printer.',
 		'desc' => 'Shop banners, event backdrops, posters and wall stickers, printed in sharp, bold colour on our own wide-format printer (that\'s it in the photo). Need a different size? Use the estimator or WhatsApp us.',
 		'attr' => 'Size', 'options' => [ 'A1 (59 × 84 cm)' => 1200, 'A0 (84 × 119 cm)' => 2200, '1 × 2 m banner' => 4500 ],
-		'attr2' => 'Material', 'options2' => [ 'PVC banner', 'Self-adhesive vinyl' ],
+		'attr2' => 'Material', 'options2' => [ 'PVC banner', 'Self-adhesive vinyl' ], 'add2' => [ 'Self-adhesive vinyl' => 20 ],
 		'specs' => [ 'Printer' => 'In-house wide-format printer', 'Materials' => 'PVC banner (with eyelets on request) or self-adhesive vinyl', 'Design' => 'Print-ready files or design on request', 'Turnaround' => 'Usually 1–2 working days' ],
 		'install' => [ 'Banners: hang with eyelets or cable ties.', 'Vinyl: apply to clean, smooth, dry walls or boards.' ],
 		'upsells' => [ 'felt-edge-squeegee' ],
+	],
+	[
+		'slug' => 'business-cards', 'name' => 'Business Cards', 'cats' => [ 'large-format' ],
+		'badge' => 'Business Printing', 'life' => 'Thick card stock', 'illustration' => true,
+		'short' => 'Full-colour business cards on thick card, designed from your logo or printed from your file.',
+		'desc' => 'Make a strong first impression: we design your business card from your logo and details, or print your ready file, on thick card stock in full colour. Choose single or double-sided and a gloss or matte finish. We send a proof on WhatsApp before printing.',
+		'attr' => 'Quantity', 'options' => [ '100 cards' => 1200, '250 cards' => 2500, '500 cards' => 4000 ],
+		'attr2' => 'Sides', 'options2' => [ 'Single-sided', 'Double-sided' ], 'add2' => [ 'Double-sided' => 30 ],
+		'finishes' => [ 'gloss', 'matte' ], 'pick_finish' => true,
+		'specs' => [ 'Size' => 'Standard 85 × 55 mm', 'Card' => 'Thick card stock', 'Print' => 'Full colour', 'Design' => 'Simple layout included', 'Turnaround' => 'About 1–2 working days after proof approval' ],
+		'install' => [ 'Send your logo, name, title, phone, email and location on WhatsApp.', 'Approve the proof we send back; printing starts after approval.' ],
+		'upsells' => [ 'flyers' ],
+	],
+	[
+		'slug' => 'flyers', 'name' => 'Flyers & Leaflets', 'cats' => [ 'large-format' ],
+		'badge' => 'Business Printing', 'life' => 'Full-colour print', 'illustration' => true,
+		'short' => 'Full-colour flyers for launches, events, menus, offers and church or school notices.',
+		'desc' => 'Promote your business, event or offer with bright full-colour flyers. Send your design or tell us what you need and we lay it out for you. A5 is the popular handout size; A4 suits menus, price lists and notices.',
+		'attr' => 'Quantity', 'options' => [ '100 flyers' => 1500, '500 flyers' => 5000, '1,000 flyers' => 8500 ],
+		'attr2' => 'Size', 'options2' => [ 'A5', 'A4' ], 'add2' => [ 'A4' => 60 ],
+		'specs' => [ 'Sizes' => 'A5 (148 × 210 mm) or A4 (210 × 297 mm)', 'Print' => 'Full colour', 'Paper' => 'Gloss art paper', 'Design' => 'Simple layout included', 'Turnaround' => 'About 1–3 working days' ],
+		'install' => [ 'Send your text, logo and photos on WhatsApp, or a print-ready PDF.', 'Approve the proof; printing starts after approval.' ],
+		'upsells' => [ 'business-cards' ],
+	],
+	[
+		'slug' => 'certificates', 'name' => 'Certificates', 'cats' => [ 'large-format' ],
+		'badge' => 'Business Printing', 'life' => 'Premium card', 'illustration' => true,
+		'short' => 'Certificates for schools, churches, trainings, awards and events, designed and printed on premium card.',
+		'desc' => 'Award, completion and appreciation certificates with your logo, border and signatures, designed to match your event and printed on heavy card. Send the list of names and we personalise each certificate.',
+		'attr' => 'Quantity', 'options' => [ '10 certificates' => 1500, '25 certificates' => 3000, '50 certificates' => 5500 ],
+		'attr2' => 'Paper', 'options2' => [ 'Standard card', 'Premium textured card' ], 'add2' => [ 'Premium textured card' => 30 ],
+		'specs' => [ 'Size' => 'A4', 'Print' => 'Full colour', 'Names' => 'Personalised from your list', 'Design' => 'Layout with your logo included', 'Turnaround' => 'About 1–3 working days' ],
+		'install' => [ 'Send your logo, wording and the list of names (Excel or a typed list) on WhatsApp.', 'Check the proof carefully for name spellings before we print.' ],
+		'upsells' => [ 'booklet-document-printing' ],
 	],
 	[
 		'slug' => 'booklet-document-printing', 'name' => 'Booklet & Document Printing', 'cats' => [ 'large-format' ],
@@ -453,7 +499,7 @@ foreach ( $products as $order => $d ) {
 					if ( $o2 !== null ) $va[ $key2 ] = $o2;
 					if ( $f !== null ) $va['pa_finish'] = $f;
 					$add = $f !== null ? ( $d['finish_add'][ $f ] ?? 0 ) : 0;
-					if ( $o2 === 'Self-adhesive vinyl' ) $add += 20;
+					if ( $o2 !== null ) $add += $d['add2'][ $o2 ] ?? 0;
 					$v = new WC_Product_Variation();
 					$v->set_parent_id( $pid );
 					$v->set_attributes( $va );
@@ -494,6 +540,8 @@ function sh_page( $slug, $title, $content ) {
 }
 sh_page( 'wishlist', 'Your wishlist', "<!-- wp:shortcode -->\n[sh_wishlist]\n<!-- /wp:shortcode -->" );
 sh_page( 'estimator', 'Custom decal & wrap cost estimator', "<!-- wp:paragraph -->\n<p>Pick your project, enter the size or quantity and choose a finish to get an instant estimate. Send it to us on WhatsApp and we confirm the final price after seeing your design.</p>\n<!-- /wp:paragraph -->\n\n<!-- wp:shortcode -->\n[sh_estimator]\n<!-- /wp:shortcode -->" );
+sh_page( 'about', 'About STICKER HUB', '' ); // Content comes from the theme's page-about.html template.
+sh_page( 'faqs', 'FAQs', '' ); // Content comes from page-faqs.html.
 $shop_page = (int) wc_get_page_id( 'shop' );
 if ( $shop_page > 0 ) wp_update_post( [ 'ID' => $shop_page, 'post_title' => 'Decals, wraps & prints' ] );
 
