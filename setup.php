@@ -44,7 +44,7 @@ if ( defined( 'SH_FAST' ) && SH_FAST ) {
 // Store settings.
 foreach ( [
 	'blogname'                               => 'STICKER HUB',
-	'blogdescription'                        => 'Who makes you known? Vinyl decals, car wraps, tints and printing from Rabai Road, Nairobi.',
+	'blogdescription'                        => 'Who makes you known? Stickers, tints, signs, vinyl and printing from Rabai Road, Nairobi.',
 	'timezone_string'                        => 'Africa/Nairobi',
 	'woocommerce_currency'                   => 'KES',
 	'woocommerce_currency_pos'               => 'left_space',
@@ -76,44 +76,34 @@ foreach ( get_posts( [ 'post_type' => [ 'post', 'page' ], 'name' => 'hello-world
 $sample = get_page_by_path( 'sample-page' );
 if ( $sample ) wp_delete_post( $sample->ID, true );
 
-// Service categories (menu order = order in the header and on the home page).
+// Categories: the shop's own list and order (Asaph's price list, WhatsApp, 20 October 2026). Menu order = order
+// of the tiles on the home page. Each gets its tile picture (images/cat-<slug>.webp) as the category image.
 $cat = [];
 $i   = 0;
 foreach ( [
-	'vinyl-decals'    => [ 'Vinyl Decals & Stickers', 'Die-cut, holographic and reflective vinyl: names, logos, portraits, sticker bombs, window patterns and product labels.' ],
-	'car-wraps'       => [ 'Car Wraps & Graphics', 'Full and partial wraps, bonnet and roof wraps, windscreen banners, motorbike graphics and fleet branding.' ],
-	'tints'           => [ 'Headlight & Window Tints', 'Smoked headlight and taillight film, yellow fog-light tint and chameleon window tint, fitted at our workshop.' ],
-	'tshirt-printing' => [ 'T-Shirt & Apparel Printing', 'Your logo or design printed on T-shirts, from one shirt to a full team or company batch.' ],
-	'large-format'    => [ 'Digital & Large Format Printing', 'Business cards, flyers, certificates, banners, posters, wall graphics and booklets, printed in-house on our own printers.' ],
-	'tools-care'      => [ 'Tools & Care', 'Squeegees and microfiber cloths for fitting and looking after vinyl and tint.' ],
+	'large-format'     => [ 'Large Format Printing', 'Banners, one way vision, clear, frost, satin, hologram and light box prints, printed in-house and priced per square metre.' ],
+	'ceramic-tints'    => [ 'Nano Ceramic Tints', 'Black presidential and chameleon nano ceramic window tint for saloons, SUVs and vans, fitted at our workshop.' ],
+	'stickers-decals'  => [ 'Stickers, Decals & Product Labels', 'Printed stickers and product labels by the square metre, custom names and decals, quarter panel window stickers, UV and dome stickers.' ],
+	'show-plates'      => [ 'Custom Show Plates', 'Custom show plates for cars and bikes, and USA-style plates with any text you like.' ],
+	'signs-cnc'        => [ 'Signs & CNC Services', 'Signs made to your size on cellular board, forever board, perspex and aluminium composite panel, and CNC cutting.' ],
+	'vinyl-wraps-ppf'  => [ 'Vinyl, Wraps & PPF Sales', 'Vinyl by the metre (normal colours, chrome, hologram, glitter, luminous, 3D carbon fibre, AK47), full wrap rolls and PPF.' ],
+	'sound-deadening'  => [ 'Sound Deadening Material', 'Sound deadening material for car doors, floors and boots.' ],
+	'vehicle-branding' => [ 'Shop & Vehicle Branding', 'Branding for shops, offices and walls, and for fleets, tuk-tuks, cars and bikes: designed, printed and fitted by us.' ],
+	'digital-printing' => [ 'Digital Printing', 'Garage service tags, flyers, posters, sticker paper, booklets, business cards, funeral programmes and certificates.' ],
+	'headlight-tints'  => [ 'Headlight Tinting', 'Front and back light tint for saloons, SUVs and vans, cut and fitted at our workshop.' ],
+	'screen-printing'  => [ 'Screen Printing', 'T-shirts and bags, screen printed in full colour, one colour, half tone or corporate style.' ],
 ] as $slug => [ $name, $desc ] ) {
 	$t = term_exists( $slug, 'product_cat' ) ?: wp_insert_term( $name, 'product_cat', [ 'slug' => $slug, 'description' => $desc ] );
 	$cat[ $slug ] = (int) $t['term_id'];
 	update_term_meta( $cat[ $slug ], 'order', $i++ );
+	$img = "/wordpress/sh-images/cat-$slug.webp";
+	if ( file_exists( $img ) ) {
+		$tmp = wp_tempnam( "cat-$slug.webp" );
+		copy( $img, $tmp );
+		$att = sh_sideload( $tmp, "cat-$slug.webp", 0, $name );
+		if ( ! is_wp_error( $att ) ) update_term_meta( $cat[ $slug ], 'thumbnail_id', $att );
+	}
 }
-
-// Finish: a global attribute with its own pages (/finish/holographic/), used by the finish filter bar.
-if ( ! wc_attribute_taxonomy_id_by_name( 'finish' ) ) {
-	wc_create_attribute( [ 'name' => 'Finish', 'slug' => 'finish', 'type' => 'select', 'order_by' => 'menu_order', 'has_archives' => true ] );
-}
-if ( ! taxonomy_exists( 'pa_finish' ) ) {
-	register_taxonomy( 'pa_finish', [ 'product' ], [ 'hierarchical' => false, 'show_ui' => false, 'query_var' => true, 'rewrite' => false ] );
-}
-$finish = [];
-foreach ( [
-	'gloss'        => [ 'Gloss', 'High-shine vinyl in solid colours. The classic look for names, logos and stripes.' ],
-	'matte'        => [ 'Matte', 'Flat, glare-free vinyl with a modern, understated look.' ],
-	'reflective'   => [ 'Reflective', 'Lights up in headlights at night: safer for bikes, matatus and fleet vehicles.' ],
-	'holographic'  => [ 'Holographic', 'Rainbow-shift vinyl that changes colour as the light and your angle move.' ],
-	'carbon-fibre' => [ 'Carbon Fibre', 'Textured carbon-weave vinyl for bonnets, mirrors, trims and accents.' ],
-	'chameleon'    => [ 'Chameleon', 'Colour-shifting film that turns from green to gold to purple with the light.' ],
-	'smoked'       => [ 'Smoked Tint', 'Dark see-through film for headlights and taillights.' ],
-] as $slug => [ $name, $desc ] ) {
-	$t = term_exists( $slug, 'pa_finish' ) ?: wp_insert_term( $name, 'pa_finish', [ 'slug' => $slug, 'description' => $desc ] );
-	$finish[ $slug ] = (int) $t['term_id'];
-	update_term_meta( $finish[ $slug ], 'order', count( $finish ) );
-}
-delete_transient( 'wc_attribute_taxonomies' );
 
 // Delivery. PLACEHOLDER prices, to confirm with the client.
 $zone = new WC_Shipping_Zone();
@@ -165,239 +155,360 @@ update_option( 'woocommerce_cheque_settings', [
 ] );
 update_option( 'woocommerce_gateway_order', [ 'bacs' => 0, 'cod' => 1, 'cheque' => 2 ] );
 
-// Products. Photos are frames of STICKER HUB's own Instagram reels and Google listing photos; products marked
-// 'illustration' have none yet and show a plain mockup. All prices are PLACEHOLDERS (Nairobi market estimates),
-// to confirm with the client. Most items are made to order, so stock is not tracked except for the tools.
-// 'options' => [ label => price ] is the main choice (its attribute name is 'attr'); 'finishes' with
-// 'pick_finish' => true lets the customer choose the finish, with 'finish_add' as a % on top of the price.
+// Products. Prices are the shop's own (Asaph's price list, WhatsApp, 20 October 2026). Where the list gives no
+// price the product has none: it shows "Price on request" and an "Ask for the price" WhatsApp button.
+// Photos are frames of STICKER HUB's own Instagram reels and Google listing photos; products marked
+// 'illustration' have none yet and show a plain drawing.
+//
+// 'price' => a simple product's price. 'options' => [ label => price ] is the main choice ('attr' names it);
+// [ label => [ label2 => price ] ] prices every pair of the main and second choice ('attr2' names the second).
+// 'attr2' / 'options2' with 'add2' => [ label2 => % ] adds a percentage instead; 'attr3' / 'options3' is an extra
+// choice that doesn't change the price. 'unit' follows the price ("per m²"), 'from' => true puts "From" before it.
+// Made to order, so stock isn't tracked.
+$on_request = 'Tell us what you need on WhatsApp or call 0766 386 934 and we send the price.';
 $products = [
+	// Large format printing
 	[
-		'slug' => 'custom-die-cut-vinyl-decal', 'name' => 'Custom Die-Cut Vinyl Decal', 'cats' => [ 'vinyl-decals' ],
-		'badge' => 'Automotive Vinyl', 'life' => '3–5 yr outdoor rating',
-		'short' => 'Your name, logo, slogan or portrait, designed and cut from weatherproof vinyl. Like the RATEGO BABA portrait we cut and fitted on this van.',
-		'desc' => 'Send us your idea, a photo or your logo and our designers turn it into clean cut lines. We cut it on our plotter, weed it by hand and mask it with application tape, ready to fit. Pick it up and we can fit it for you at the workshop, or take it home with a squeegee and fit it yourself. Prices include simple design work; detailed portraits may need a quick chat on WhatsApp first.',
-		'attr' => 'Size', 'options' => [ 'Small (up to 30 cm)' => 1200, 'Medium (up to 60 cm)' => 2500, 'Large (up to 100 cm)' => 4500 ],
-		'finishes' => [ 'gloss', 'matte', 'reflective', 'carbon-fibre' ], 'pick_finish' => true, 'finish_add' => [ 'reflective' => 30, 'carbon-fibre' => 20 ],
-		'specs' => [ 'Material' => 'Self-adhesive cut vinyl, outdoor grade', 'Outdoor life' => '3–5 years (gloss and matte), 5+ years reflective', 'Surfaces' => 'Glass, paintwork, metal, smooth plastic', 'Colours' => 'White, black, gold, silver and more on request', 'Design' => 'Simple layout included' ],
-		'install' => [ 'Clean the surface with soapy water, then wipe with spirit or alcohol. No wax, no polish.', 'Fit in the shade, between 15 °C and 30 °C.', 'Tape the decal in place along the top edge (hinge method).', 'Peel the backing, then press from the centre outwards with a squeegee.', 'Peel the clear application tape back slowly at a sharp angle.', 'Wait 48 hours before washing; no pressure washer on the edges for a week.' ],
-		'upsells' => [ 'felt-edge-squeegee', 'microfiber-cloth-pack' ],
+		'slug' => 'large-format-printing', 'name' => 'Large Format Printing', 'cats' => [ 'large-format' ],
+		'badge' => 'Per square metre', 'unit' => 'per m²', 'featured' => true,
+		'short' => 'Banners, window graphics and backlit prints, printed in-house on our wide-format printer. Priced per square metre (1 m × 1 m).',
+		'desc' => 'Choose the material, then set the quantity to the number of square metres you need: a banner 2 m wide and 1 m high is 2. Not sure about the size? Use the price calculator, or send us a photo of the space on WhatsApp and we work it out for you.',
+		'attr' => 'Material', 'options' => [ 'White' => 350, 'Black back banner' => 350, 'Light box' => 400, 'One way vision' => 600, 'Clear' => 600, 'Frost' => 600, 'Satin' => 800, 'Hologram' => 1200 ],
+		'specs' => [ 'Price' => 'Per square metre (1 m × 1 m)', 'Materials' => 'White, black back banner, light box, one way vision, clear, frost, satin, hologram', 'One way vision' => 'Printed outside, see-through from inside: for shop and car windows', 'Design' => 'Send your file, or we design it for you' ],
+		'install' => [ 'Pick the material and enter the square metres as the quantity.', 'Send your design (or your idea) on WhatsApp after you order.', 'We send a proof, print it and call you when it is ready.' ],
+	],
+	// Nano ceramic tints
+	[
+		'slug' => 'presidential-ceramic-tint', 'name' => 'Black Presidential Nano Ceramic Tint', 'cats' => [ 'ceramic-tints' ],
+		'badge' => 'Nano ceramic tint', 'illustration' => true, 'featured' => true,
+		'short' => 'Nano ceramic window tint that keeps your car cooler and cuts glare. Choose your vehicle, the windows and the shade: 5% is very dark, 45% is very light.',
+		'desc' => 'Fitted by us at the workshop on Rabai Road Estate. "Whole car" is the windscreen and all the other windows together. Before choosing a dark shade for the windscreen or front windows, please check the NTSA rules for your vehicle.',
+		'attr' => 'Vehicle', 'attr2' => 'Windows', 'options' => [
+			'Saloon' => [ 'Front windscreen' => 3500, 'All other windows' => 4000, 'Whole car' => 7500 ],
+			'SUV'    => [ 'Front windscreen' => 5500, 'All other windows' => 7000, 'Whole car' => 12500 ],
+			'Van'    => [ 'Front windscreen' => 4000, 'All other windows' => 6500, 'Whole car' => 10500 ],
+		],
+		'attr3' => 'Shade', 'options3' => [ '5% (very dark)', '15%', '35%', '45% (very light)' ],
+		'specs' => [ 'Film' => 'Black presidential nano ceramic tint', 'Shades' => '5% (very dark), 15%, 35%, 45% (very light)', 'Vehicles' => 'Saloons, SUVs and vans', 'Fitting' => 'At our Rabai Road workshop' ],
+		'install' => [ 'Order, then WhatsApp or call us to book a fitting time.', 'Bring the car to Rabai Road Estate; we clean the glass and fit the film.', 'Don\'t wind the windows down for 3 days.', 'Clean with a soft cloth only.' ],
+		'upsells' => [ 'headlight-taillight-tint' ],
 	],
 	[
-		'slug' => 'holographic-sticker-bomb-pack', 'name' => 'Holographic Sticker Bomb Pack', 'cats' => [ 'vinyl-decals' ],
-		'badge' => 'Holographic Vinyl', 'life' => '2–3 yr outdoor rating',
-		'short' => 'A mixed pack of holographic die-cut stickers to bomb a rear window, laptop, helmet or toolbox.',
-		'desc' => 'Rainbow holographic stickers that flash every colour in the sun, all individually die-cut. Cover a rear windscreen like the one in the photos, or share them across laptops, helmets and toolboxes. Want your own logo in the mix? Ask us on WhatsApp.',
-		'attr' => 'Pack', 'options' => [ '25 stickers' => 800, '50 stickers' => 1500, '100 stickers' => 2800 ],
-		'finishes' => [ 'holographic' ],
-		'specs' => [ 'Material' => 'Holographic vinyl, individually die-cut', 'Sizes' => 'About 5–12 cm each', 'Outdoor life' => '2–3 years', 'Surfaces' => 'Glass, paint, laptops, helmets, hard plastic' ],
-		'install' => [ 'Clean and dry the surface first.', 'Lay the stickers out before peeling to plan the bomb.', 'Press each one down from the middle outwards; overlap edges by a few millimetres.', 'Leave 48 hours before washing.' ],
-		'upsells' => [ 'felt-edge-squeegee' ],
+		'slug' => 'chameleon-ceramic-tint', 'name' => 'Chameleon Nano Ceramic Tint', 'cats' => [ 'ceramic-tints' ],
+		'badge' => 'Nano ceramic tint',
+		'short' => 'Colour-shifting tint in Purple Pink, Sunset Red, Blue Purple or Green Yellow, like the one on this van. Call or WhatsApp us for the price for your car.',
+		'desc' => 'Chameleon tint changes colour as the light and your angle change. Ask us which windows it can go on for your vehicle and the price. ' . $on_request,
+		'specs' => [ 'Colours' => 'Purple Pink, Sunset Red, Blue Purple, Green Yellow', 'Price' => 'On request: call or WhatsApp us', 'Fitting' => 'At our Rabai Road workshop' ],
+		'install' => [ 'Tell us your car and the colour you like on WhatsApp.', 'We send the price and book a fitting time.' ],
+		'upsells' => [ 'presidential-ceramic-tint' ],
+	],
+	// Stickers, decals & product labels
+	[
+		'slug' => 'printed-stickers-labels', 'name' => 'Printed Stickers & Product Labels', 'cats' => [ 'stickers-decals' ],
+		'badge' => 'Per square metre', 'unit' => 'per m²', 'featured' => true,
+		'short' => 'Your stickers or product labels printed and cut, priced per square metre. One square metre is about 100 stickers.',
+		'desc' => 'Labels for food, cosmetics and online shops, logo stickers and thank-you stickers, like the ones in the photos. White is the standard sticker; special colours cost more. Send your design on WhatsApp, or we design it for you.',
+		'attr' => 'Colour', 'options' => [ 'White' => 1500, 'Special colours' => 4500 ],
+		'specs' => [ 'Price' => 'Per square metre (1 m × 1 m)', 'About' => '100 stickers per square metre', 'Proof' => 'Sent on WhatsApp before printing' ],
+		'install' => [ 'Choose white or special colours and enter the square metres as the quantity.', 'Send your design on WhatsApp; we send a proof before printing.' ],
 	],
 	[
-		'slug' => 'geometric-window-pattern-decal', 'name' => 'Geometric Window Pattern Decal', 'cats' => [ 'vinyl-decals' ],
-		'badge' => 'Window Graphics', 'life' => '3–5 yr outdoor rating',
-		'short' => 'A full-coverage tribal geometric pattern cut for your rear windows. You can still see out from inside.',
-		'desc' => 'A bold geometric pattern cut to the exact shape of your windows, as on the van in the photos. It gives the car a custom look and some privacy, and you can still see out from the driver\'s seat. We measure and fit at the workshop.',
-		'attr' => 'Coverage', 'options' => [ 'One window' => 2500, 'Rear windscreen' => 3500, 'Two rear side windows' => 4500 ],
-		'finishes' => [ 'gloss', 'matte' ], 'pick_finish' => true,
-		'specs' => [ 'Material' => 'Cut vinyl, outdoor grade', 'Fit' => 'Cut to your window shape at the workshop', 'Visibility' => 'See-through gaps keep the view from inside', 'Outdoor life' => '3–5 years' ],
-		'install' => [ 'Best fitted by us: the pattern is cut to your exact windows.', 'Glass is cleaned with alcohol before fitting.', 'Don\'t wind fitted door windows down for 3 days.', 'Use a soft cloth on the inside of the glass, no scrapers.' ],
-		'upsells' => [ 'microfiber-cloth-pack' ],
+		'slug' => 'special-decals', 'name' => 'Special Decals', 'cats' => [ 'stickers-decals' ],
+		'badge' => 'Per piece', 'unit' => 'per piece',
+		'short' => 'Special decals for cars, bikes, helmets and laptops at KSh 300 a piece. Send us the design you want on WhatsApp.',
+		'desc' => 'Pick a design from our work or send your own, then set the quantity to the number of decals you want.',
+		'price' => 300,
+		'specs' => [ 'Price' => 'KSh 300 per piece', 'Surfaces' => 'Cars, bikes, helmets, laptops, phones' ],
+		'install' => [ 'Clean and dry the surface first.', 'Press the decal down from the middle outwards.', 'Wait 48 hours before washing.' ],
 	],
 	[
-		'slug' => 'dome-stickers', 'name' => 'Dome Stickers (3D Resin)', 'cats' => [ 'vinyl-decals' ],
-		'badge' => '3D Dome Stickers', 'life' => '3+ yr outdoor rating', 'illustration' => true,
-		'short' => 'Your logo printed and topped with a clear, raised resin dome: glossy, 3D and tough. For cars, bikes, products and giveaways.',
-		'desc' => 'Dome stickers (domestickers) are printed vinyl stickers coated with a clear polyurethane resin that sets into a raised, glossy, slightly flexible dome. They feel premium, resist scratches and weather, and make logos pop on cars, bikes, helmets, phones, appliances and product packaging. Send your logo on WhatsApp and we send a proof before printing.',
-		'attr' => 'Quantity', 'options' => [ '50 stickers' => 2500, '100 stickers' => 4500, '250 stickers' => 10000 ],
-		'attr2' => 'Size', 'options2' => [ 'Up to 5 cm', 'Up to 8 cm' ], 'add2' => [ 'Up to 8 cm' => 50 ],
-		'finishes' => [ 'gloss' ],
-		'specs' => [ 'Material' => 'Printed vinyl with a clear polyurethane resin dome', 'Shapes' => 'Round, square, oval or cut to your logo', 'Feel' => 'Raised 3D gloss, slightly flexible', 'Outdoor life' => '3+ years', 'Proof' => 'Sent on WhatsApp before printing' ],
-		'install' => [ 'Clean the surface with alcohol and let it dry.', 'Peel and press down firmly from the centre outwards.', 'Avoid bending them sharply; the dome flexes but can crack if folded.' ],
-		'upsells' => [ 'custom-holographic-logo-stickers' ],
+		'slug' => 'custom-name-decals', 'name' => 'Custom Names & Decals', 'cats' => [ 'stickers-decals' ],
+		'badge' => 'Custom vinyl', 'from' => true, 'featured' => true,
+		'short' => 'Your name, slogan, logo or portrait cut in vinyl for your car, van, matatu or bike. From KSh 1,500; bigger designs cost more.',
+		'desc' => 'Send us your idea, a photo or your logo. We design it, cut it and can fit it for you at the workshop, like the RATEGO BABA portrait and the windscreen name banners in the photos. The final price depends on the size: we confirm it on WhatsApp before we start.',
+		'price' => 1500,
+		'specs' => [ 'Price' => 'From KSh 1,500, depending on size', 'Material' => 'Outdoor vinyl', 'Fitting' => 'At our Rabai Road workshop, or take it home' ],
+		'install' => [ 'Clean the surface with soapy water, then wipe with spirit. No wax.', 'Tape the decal in place along the top edge.', 'Peel the backing and press from the centre outwards.', 'Peel the clear tape back slowly; wait 48 hours before washing.' ],
+		'upsells' => [ 'quarter-panel-window-stickers' ],
 	],
 	[
-		'slug' => 'side-window-sticker-set', 'name' => 'Side Window Sticker Set', 'cats' => [ 'vinyl-decals' ],
-		'badge' => 'Automotive Vinyl', 'life' => '2–3 yr outdoor rating',
-		'short' => 'A ready-made set of car-culture stickers for a quarter window, like the "STANCE" set in the photo.',
-		'desc' => 'A themed set of printed and cut stickers made to fill a small side or quarter window. We can swap in your car club name, plate or Instagram handle on request.',
-		'price' => 1000, 'finishes' => [ 'gloss' ],
-		'specs' => [ 'Material' => 'Printed vinyl, laminated, plus cut vinyl lettering', 'Pieces' => 'About 10–14 per set', 'Outdoor life' => '2–3 years' ],
-		'install' => [ 'Clean the glass with alcohol.', 'Fit from the bottom of the window up.', 'Press the edges down well; wait 48 hours before washing.' ],
-		'upsells' => [ 'felt-edge-squeegee' ],
+		'slug' => 'quarter-panel-window-stickers', 'name' => 'Quarter Panel Window Stickers', 'cats' => [ 'stickers-decals' ],
+		'badge' => 'Window stickers',
+		'short' => 'Sticker designs for the small quarter panel window, from KSh 1,500 to KSh 2,500 depending on the size.',
+		'desc' => 'A set of stickers made to fill your car\'s small side window, like the STANCE set in the photo. We can put in your car club, plate or Instagram name.',
+		'attr' => 'Size', 'options' => [ 'Small' => 1500, 'Medium' => 2000, 'Large' => 2500 ],
+		'specs' => [ 'Price' => 'KSh 1,500 – 2,500, by size', 'Fitting' => 'At the workshop, or fit it yourself' ],
+		'install' => [ 'Clean the glass with spirit.', 'Fit from the bottom of the window up.', 'Wait 48 hours before washing.' ],
 	],
 	[
-		'slug' => 'custom-holographic-logo-stickers', 'name' => 'Custom Holographic Logo Stickers', 'cats' => [ 'vinyl-decals' ],
-		'badge' => 'Brand Stickers', 'life' => '2–3 yr outdoor rating',
-		'short' => 'Your logo printed and die-cut on holographic vinyl. Great for packaging, giveaways and merch.',
-		'desc' => 'Make your brand shine: we print your logo on holographic vinyl and die-cut it to shape, like the panda stickers in the photos. Send your logo (a PNG, PDF or AI file is best) and we send a proof on WhatsApp before printing.',
-		'attr' => 'Quantity', 'options' => [ '50 stickers' => 1500, '100 stickers' => 2500, '250 stickers' => 5000 ],
-		'finishes' => [ 'holographic' ],
-		'specs' => [ 'Material' => 'Printed holographic vinyl, die-cut', 'Size' => 'Up to 7 × 7 cm each', 'Proof' => 'Sent on WhatsApp before printing', 'Turnaround' => 'About 2–3 working days after proof approval' ],
-		'install' => [ 'Peel and stick on clean, dry, smooth surfaces.', 'For packaging, apply before filling boxes or bags.' ],
-		'upsells' => [ 'product-labels-thank-you-cards' ],
+		'slug' => 'uv-stickers', 'name' => 'UV Stickers', 'cats' => [ 'stickers-decals' ],
+		'badge' => 'UV printed', 'illustration' => true,
+		'short' => 'UV printed stickers with bright, raised colours. KSh 3,500.',
+		'desc' => 'Send us your design or logo on WhatsApp and tell us the size and quantity you need; we confirm everything before printing.',
+		'price' => 3500,
+		'specs' => [ 'Price' => 'KSh 3,500', 'Proof' => 'Sent on WhatsApp before printing' ],
+		'install' => [ 'Send your design on WhatsApp after you order.', 'Approve the proof; we print and call you when ready.' ],
 	],
 	[
-		'slug' => 'product-labels-thank-you-cards', 'name' => 'Product Labels & Thank-You Cards', 'cats' => [ 'vinyl-decals', 'large-format' ],
-		'badge' => 'Business Printing', 'life' => 'Indoor & packaging use',
-		'short' => 'Branded product labels and thank-you cards for food, cosmetics and online shops.',
-		'desc' => 'Labels and thank-you cards with your logo, contacts and QR code, printed in full colour, like the kitchen and bakery labels we printed in these photos. We can design them from scratch or print your artwork.',
-		'attr' => 'Quantity', 'options' => [ '100 pieces' => 1000, '250 pieces' => 2000, '500 pieces' => 3500 ],
-		'finishes' => [ 'gloss', 'matte' ], 'pick_finish' => true,
-		'specs' => [ 'Material' => 'Printed sticker paper or vinyl, cut to shape', 'Design' => 'Simple label design included', 'Proof' => 'Sent on WhatsApp before printing', 'Turnaround' => 'About 1–3 working days' ],
-		'install' => [ 'Store labels flat and away from heat.', 'Stick onto clean, dry packaging.' ],
-		'upsells' => [ 'custom-holographic-logo-stickers' ],
+		'slug' => 'dome-stickers', 'name' => 'Dome Stickers (3D Resin)', 'cats' => [ 'stickers-decals' ],
+		'badge' => '3D dome stickers', 'illustration' => true,
+		'short' => 'Your logo printed and topped with a clear, raised resin dome: glossy, 3D and tough. Ask us for the price.',
+		'desc' => 'Dome stickers are printed stickers coated with clear resin that sets into a raised, glossy dome. Great for cars, bikes, helmets, products and giveaways. ' . $on_request,
+		'specs' => [ 'Look' => 'Raised 3D gloss', 'Shapes' => 'Round, square, oval or cut to your logo', 'Price' => 'On request: call or WhatsApp us' ],
+		'install' => [ 'Send your logo, the size and how many you need on WhatsApp.', 'We send the price and a proof before printing.' ],
+	],
+	// Custom show plates
+	[
+		'slug' => 'car-show-plate', 'name' => 'Custom Car Show Plate', 'cats' => [ 'show-plates' ],
+		'badge' => 'Show plate', 'illustration' => true, 'featured' => true,
+		'short' => 'A custom show plate for your car with the text you want. KSh 1,500 for the front or the back.',
+		'desc' => 'Tell us the text and style on WhatsApp after you order. Show plates are for car shows, display and private grounds: on public roads your car still needs its official number plates.',
+		'attr' => 'Plate', 'options' => [ 'Front' => 1500, 'Back' => 1500 ],
+		'specs' => [ 'Price' => 'KSh 1,500 each (front or back)', 'Text' => 'Your choice', 'Use' => 'Shows and display, not instead of official plates' ],
+		'install' => [ 'Order, then send us the text you want on WhatsApp.', 'We send a preview before making it.' ],
+		'upsells' => [ 'usa-custom-plate' ],
 	],
 	[
-		'slug' => 'holographic-bonnet-wrap', 'name' => 'Holographic Bonnet Wrap', 'cats' => [ 'car-wraps' ],
-		'badge' => 'Partial Wrap', 'life' => '3–5 yr outdoor rating',
-		'short' => 'A holographic diamond-pattern partial wrap for your bonnet or roof, fitted at our workshop.',
-		'desc' => 'A head-turning partial wrap that flashes rainbow diamonds in the sun, as fitted on this Suzuki Swift. Your paint stays protected underneath, and the wrap can be peeled off cleanly later. Book a fitting slot on WhatsApp after you order.',
-		'attr' => 'Coverage', 'options' => [ 'Bonnet' => 8500, 'Bonnet + roof' => 17000 ],
-		'finishes' => [ 'holographic' ],
-		'specs' => [ 'Material' => 'Holographic wrap vinyl with air-release glue', 'Fitting' => 'At our Rabai Road workshop, about 2–4 hours', 'Paint' => 'Protects the paint; removable later', 'Outdoor life' => '3–5 years' ],
-		'install' => [ 'Fitted by us: bring the car washed if you can.', 'No car wash for 5 days after fitting.', 'Hand-wash only; keep pressure washers away from the edges.', 'Wax-free cleaners only.' ],
-		'upsells' => [ 'microfiber-cloth-pack' ],
+		'slug' => 'bike-show-plate', 'name' => 'Custom Bike Show Plate', 'cats' => [ 'show-plates' ],
+		'badge' => 'Show plate', 'illustration' => true,
+		'short' => 'A custom show plate for your motorbike in yellow or white. KSh 1,000.',
+		'desc' => 'Tell us the text you want on WhatsApp after you order. Show plates are for shows and display: on public roads your bike still needs its official number plate.',
+		'attr' => 'Colour', 'options' => [ 'Yellow' => 1000, 'White' => 1000 ],
+		'specs' => [ 'Price' => 'KSh 1,000', 'Colours' => 'Yellow or white', 'Use' => 'Shows and display, not instead of official plates' ],
+		'install' => [ 'Order, then send us the text you want on WhatsApp.', 'We send a preview before making it.' ],
 	],
 	[
-		'slug' => 'windshield-name-banner', 'name' => 'Windscreen Name Banner', 'cats' => [ 'car-wraps', 'vinyl-decals' ],
-		'badge' => 'Automotive Vinyl', 'life' => '3–5 yr outdoor rating',
-		'short' => 'Your name, crew or business in big letters across the top of the windscreen. The BONDO007 van is ours.',
-		'desc' => 'The classic matatu and van banner: a name or slogan in bold letters across the top strip of the windscreen, designed in your style and cut to fit. We fit it at the workshop in about 30 minutes.',
-		'attr' => 'Vehicle', 'options' => [ 'Saloon / hatchback' => 2000, 'SUV / van / matatu' => 3000 ],
-		'finishes' => [ 'gloss', 'reflective', 'holographic' ], 'pick_finish' => true, 'finish_add' => [ 'reflective' => 30, 'holographic' => 30 ],
-		'specs' => [ 'Material' => 'Cut vinyl, outdoor grade', 'Position' => 'Top strip of the windscreen, above the driver\'s view', 'Fitting' => 'About 30 minutes at the workshop', 'Outdoor life' => '3–5 years' ],
-		'install' => [ 'Fitted on the outside of the glass, above the wiper sweep.', 'Leave the wipers off the banner for 48 hours.' ],
-		'upsells' => [ 'felt-edge-squeegee' ],
+		'slug' => 'usa-custom-plate', 'name' => 'USA & Foreign Custom Plate', 'cats' => [ 'show-plates' ],
+		'badge' => 'Show plate', 'illustration' => true,
+		'short' => 'A USA-style custom plate in any design you choose. KSh 2,500.',
+		'desc' => 'Pick any American state style (or another country) and your own text. Send us a picture of the style you like on WhatsApp. For display and shows only.',
+		'price' => 2500,
+		'specs' => [ 'Price' => 'KSh 2,500', 'Style' => 'Any USA state, or another country', 'Use' => 'Display and shows' ],
+		'install' => [ 'Order, then send the style and text on WhatsApp.', 'We send a preview before making it.' ],
+	],
+	// Signs & CNC services
+	[
+		'slug' => 'cellular-forever-board', 'name' => 'Cellular & Forever Board Signs', 'cats' => [ 'signs-cnc' ],
+		'badge' => 'Signs', 'illustration' => true,
+		'short' => 'Signs and cut letters on cellular board (8 mm or 18 mm) or 3 mm forever board, made to your size.',
+		'desc' => 'Light, strong boards for shop signs, office signs, 3D letters and displays. Tell us the size and design on WhatsApp and we confirm the final price for your sign.',
+		'attr' => 'Board', 'options' => [ '3 mm forever board' => 1500, '8 mm cellular board' => 4000, '18 mm cellular board' => 6500 ],
+		'specs' => [ 'Boards' => '3 mm forever board, 8 mm and 18 mm cellular board', 'Size' => 'Made to your size', 'Design' => 'We design it, or send your file' ],
+		'install' => [ 'Order, then send the size and design on WhatsApp.', 'We confirm the price and send a proof.' ],
+		'upsells' => [ 'cnc-cutting' ],
 	],
 	[
-		'slug' => 'motorbike-top-box-decals', 'name' => 'Motorbike Top Box & Pannier Decals', 'cats' => [ 'car-wraps', 'vinyl-decals' ],
-		'badge' => 'Bike Graphics', 'life' => '3–5 yr outdoor rating',
-		'short' => 'Mountain, name and logo graphics cut for your top box and panniers, like this adventure-bike set.',
-		'desc' => 'Make your touring boxes yours: mountains, your bike\'s name, your route or your handle, cut in vinyl and fitted to the shape of your boxes.',
-		'attr' => 'Set', 'options' => [ 'Top box only' => 1500, 'Top box + 2 panniers' => 3500 ],
-		'finishes' => [ 'gloss', 'reflective' ], 'pick_finish' => true, 'finish_add' => [ 'reflective' => 30 ],
-		'specs' => [ 'Material' => 'Cut vinyl, outdoor grade', 'Surfaces' => 'Aluminium and plastic boxes', 'Outdoor life' => '3–5 years' ],
-		'install' => [ 'Clean the box with alcohol first.', 'Fit on a warm (not hot) day and press the edges well.', 'Wait 48 hours before riding in rain.' ],
-		'upsells' => [ 'felt-edge-squeegee' ],
+		'slug' => 'perspex-acrylic', 'name' => 'Perspex (Acrylic), Any Colour', 'cats' => [ 'signs-cnc' ],
+		'badge' => 'Signs', 'illustration' => true,
+		'short' => 'Perspex in any colour for signs, letters and displays: 3 mm, 5 mm or 10 mm thick.',
+		'desc' => 'Glossy, strong perspex for signs, reception logos, name plates and displays, cut to shape on our CNC. Tell us the size and design on WhatsApp.',
+		'attr' => 'Thickness', 'options' => [ '3 mm' => 4000, '5 mm' => 13000, '10 mm' => 24000 ],
+		'specs' => [ 'Thickness' => '3 mm, 5 mm or 10 mm', 'Colour' => 'Any colour', 'Cutting' => 'CNC cut to your shape' ],
+		'install' => [ 'Order, then send the size and design on WhatsApp.', 'We confirm the price and send a proof.' ],
+		'upsells' => [ 'cnc-cutting' ],
 	],
 	[
-		'slug' => 'fleet-tuk-tuk-branding', 'name' => 'Fleet & Tuk-Tuk Branding', 'cats' => [ 'car-wraps' ],
-		'badge' => 'Fleet Branding', 'life' => '3–5 yr outdoor rating',
-		'short' => 'Branding for tuk-tuks, taxis, vans and company cars, priced per vehicle. Like the SHALLO tuk-tuk fleet.',
-		'desc' => 'Put your business on the road. We design the layout, print or cut the graphics and brand every vehicle the same way, as we did for this tuk-tuk fleet. Branding five or more vehicles? Ask on WhatsApp for a fleet price.',
-		'attr' => 'Vehicle', 'options' => [ 'Tuk-tuk (front + sides)' => 5500, 'Saloon (doors + rear)' => 9000, 'Van / matatu (sides + rear)' => 15000 ],
-		'finishes' => [ 'gloss', 'reflective' ], 'pick_finish' => true, 'finish_add' => [ 'reflective' => 25 ],
-		'specs' => [ 'Material' => 'Printed and laminated vinyl, or cut vinyl', 'Design' => 'Layout and proof included', 'Fitting' => 'At the workshop or on site in Nairobi', 'Outdoor life' => '3–5 years' ],
-		'install' => [ 'Vehicles should be washed and dry before fitting.', 'No car wash for 5 days after fitting.' ],
-		'upsells' => [ 'microfiber-cloth-pack' ],
+		'slug' => 'aluminium-composite-panel', 'name' => 'Aluminium Composite Panel (ACP)', 'cats' => [ 'signs-cnc' ],
+		'badge' => 'Per piece', 'unit' => 'per piece', 'illustration' => true,
+		'short' => 'ACP panels, 3 mm or 4 mm: black, red or normal colours, or gold and silver chrome.',
+		'desc' => 'Aluminium composite panel is the strong, weatherproof board used for shop fronts and outdoor signs. Choose the colour and thickness; we can cut it and add your lettering.',
+		'attr' => 'Colour', 'options' => [ 'Black, red or normal colours' => 5000, 'Gold or silver chrome' => 7000 ],
+		'attr2' => 'Thickness', 'options2' => [ '3 mm', '4 mm' ],
+		'specs' => [ 'Price' => 'Per piece', 'Thickness' => '3 mm or 4 mm', 'Colours' => 'Black, red, normal colours, gold or silver chrome' ],
+		'install' => [ 'Order, then tell us the size and design on WhatsApp.' ],
+		'upsells' => [ 'cnc-cutting' ],
 	],
 	[
-		'slug' => 'chameleon-windshield-tint', 'name' => 'Chameleon Window Tint', 'cats' => [ 'tints' ],
-		'badge' => 'Tint Film', 'life' => '3–5 yr rating',
-		'short' => 'Colour-shifting tint that turns green, gold and purple with the light, fitted at our workshop.',
-		'desc' => 'The chameleon film on the BONDO007 van: it shifts colour as you move around the car. Fitted by us on clean glass at the workshop. Please check the NTSA rules on how dark your front windows and windscreen may be before you choose.',
-		'attr' => 'Glass', 'options' => [ 'Front door windows (pair)' => 6000, 'Windscreen' => 9500 ],
-		'finishes' => [ 'chameleon' ],
-		'specs' => [ 'Material' => 'Chameleon tint film', 'Fitting' => 'At our Rabai Road workshop', 'Rules' => 'Check NTSA limits for front glass before fitting' ],
-		'install' => [ 'Fitted by us.', 'Don\'t wind fitted windows down for 3 days.', 'Clean with a soft cloth and ammonia-free cleaner.' ],
-		'upsells' => [ 'microfiber-cloth-pack' ],
+		'slug' => 'cnc-cutting', 'name' => 'CNC Cutting Service', 'cats' => [ 'signs-cnc' ],
+		'badge' => 'CNC', 'from' => true, 'illustration' => true,
+		'short' => 'All CNC cutting jobs cost from KSh 1,000 up to KSh 2,000, depending on the design.',
+		'desc' => 'Letters, logos and shapes cut on our CNC machine from board, perspex or ACP. Send your design on WhatsApp and we confirm the price before cutting.',
+		'price' => 1000,
+		'specs' => [ 'Price' => 'KSh 1,000 – 2,000 per job', 'Materials' => 'Cellular board, forever board, perspex, ACP' ],
+		'install' => [ 'Send your design or logo on WhatsApp.', 'We confirm the price and cut it.' ],
 	],
 	[
-		'slug' => 'headlight-taillight-tint', 'name' => 'Headlight & Taillight Smoke Tint', 'cats' => [ 'tints' ],
-		'badge' => 'Tint Film', 'life' => '2–3 yr rating', 'illustration' => true,
-		'short' => 'Smoked or yellow film for headlights, fog lights and taillights, cut to your lamps and fitted.',
-		'desc' => 'Give the front and back of your car a darker, meaner look, or warm yellow fog lights. We cut the film to your exact lamps and fit it at the workshop. Light smoke keeps your lights bright; dark smoke is for show and taillights.',
-		'attr' => 'Lights', 'options' => [ 'Headlights (pair)' => 3500, 'Taillights (pair)' => 3000, 'Headlights + taillights' => 6000 ],
-		'attr2' => 'Shade', 'options2' => [ 'Light smoke', 'Dark smoke', 'Yellow' ],
-		'finishes' => [ 'smoked' ],
-		'specs' => [ 'Material' => 'Self-healing lamp tint film', 'Fitting' => 'About 1 hour at the workshop', 'Road use' => 'Light smoke or yellow recommended on headlights' ],
-		'install' => [ 'Fitted by us on clean lamps.', 'No car wash for 3 days.', 'Polish lamps with a soft microfiber cloth only.' ],
-		'upsells' => [ 'microfiber-cloth-pack' ],
+		'slug' => 'custom-signs', 'name' => 'Custom Signs (Any Size)', 'cats' => [ 'signs-cnc' ],
+		'badge' => 'Signs', 'illustration' => true,
+		'short' => 'Shop, office and building signs made to your size. Ask us for the price.',
+		'desc' => 'From a small door sign to a full shop front: tell us where it goes, the size and your design. ' . $on_request,
+		'specs' => [ 'Size' => 'Any size', 'Materials' => 'Board, perspex, ACP, vinyl', 'Price' => 'On request: call or WhatsApp us' ],
+		'install' => [ 'Send a photo of the wall or shop front and your logo on WhatsApp.', 'We send the price and a design.' ],
+	],
+	// Vinyl, wraps & PPF sales
+	[
+		'slug' => 'vinyl-by-the-metre', 'name' => 'Vinyl by the Metre', 'cats' => [ 'vinyl-wraps-ppf' ],
+		'badge' => 'Per metre', 'unit' => 'per metre', 'featured' => true,
+		'short' => 'Buy vinyl for your own projects. Choose the type, then set the quantity to the number of metres.',
+		'desc' => 'Normal colours and chrome come 2 ft wide; hologram, glitter hologram and luminous 4 ft; 3D carbon fibre and AK47 5 ft. Pick up at the workshop or we deliver.',
+		'attr' => 'Vinyl', 'options' => [ '2 ft normal colours' => 200, '2 ft gold / silver chrome' => 350, '4 ft luminous colours' => 800, '4 ft hologram' => 1000, '5 ft 3D carbon fibre' => 1000, '5 ft AK47' => 1000, '4 ft glitter hologram' => 1500 ],
+		'specs' => [ 'Price' => 'Per metre', 'Widths' => '2 ft, 4 ft or 5 ft, by type' ],
+		'install' => [ 'Choose the vinyl and enter the metres as the quantity.', 'Tell us the colour on WhatsApp after you order.' ],
+		'upsells' => [ 'wrap-vinyl-roll' ],
 	],
 	[
-		'slug' => 'custom-printed-t-shirt', 'name' => 'Custom Printed T-Shirt', 'cats' => [ 'tshirt-printing' ],
-		'badge' => 'Custom Apparel', 'life' => 'Wash-tested print', 'illustration' => true,
-		'short' => 'Your logo, name or design printed on a quality cotton T-shirt. One shirt or a full team batch.',
-		'desc' => 'Printed T-shirts for events, teams, companies and merch. Send your design on WhatsApp and we send a mockup before printing. For 10 or more shirts, use the cost estimator for batch pricing.',
-		'attr' => 'Print', 'options' => [ 'Front only' => 1200, 'Front + back' => 1700 ],
-		'attr2' => 'Colour', 'options2' => [ 'Black', 'White' ],
-		'specs' => [ 'Shirt' => 'Cotton crew-neck, sizes S–XXL', 'Print' => 'Full colour', 'Proof' => 'Mockup on WhatsApp before printing', 'Care' => 'Wash inside out, cool, no tumble dry' ],
-		'install' => [ 'Wash inside out in cool water.', 'Don\'t iron directly on the print.' ],
-		'upsells' => [ 'custom-holographic-logo-stickers' ],
+		'slug' => 'ppf-paint-protection-film', 'name' => 'PPF Paint Protection Film (5 ft, 7 micron)', 'cats' => [ 'vinyl-wraps-ppf' ],
+		'badge' => 'Per metre', 'unit' => 'per metre', 'illustration' => true,
+		'short' => 'Clear paint protection film, 5 ft wide and 7 micron thick, sold by the metre.',
+		'desc' => 'Clear film that protects paint from scratches and stone chips. Set the quantity to the number of metres you need.',
+		'price' => 3500,
+		'specs' => [ 'Price' => 'Per metre', 'Width' => '5 ft', 'Thickness' => '7 micron' ],
+		'install' => [ 'Enter the metres as the quantity.', 'Ask us on WhatsApp if you want it fitted.' ],
 	],
 	[
-		'slug' => 'large-format-banner-print', 'name' => 'Large Format Banner & Poster Print', 'cats' => [ 'large-format' ],
-		'badge' => 'Large Format', 'life' => 'Indoor & outdoor',
-		'short' => 'Banners, posters and wall graphics printed in-house on our wide-format printer.',
-		'desc' => 'Shop banners, event backdrops, posters and wall stickers, printed in sharp, bold colour on our own wide-format printer (that\'s it in the photo). Need a different size? Use the estimator or WhatsApp us.',
-		'attr' => 'Size', 'options' => [ 'A1 (59 × 84 cm)' => 1200, 'A0 (84 × 119 cm)' => 2200, '1 × 2 m banner' => 4500 ],
-		'attr2' => 'Material', 'options2' => [ 'PVC banner', 'Self-adhesive vinyl' ], 'add2' => [ 'Self-adhesive vinyl' => 20 ],
-		'specs' => [ 'Printer' => 'In-house wide-format printer', 'Materials' => 'PVC banner (with eyelets on request) or self-adhesive vinyl', 'Design' => 'Print-ready files or design on request', 'Turnaround' => 'Usually 1–2 working days' ],
-		'install' => [ 'Banners: hang with eyelets or cable ties.', 'Vinyl: apply to clean, smooth, dry walls or boards.' ],
-		'upsells' => [ 'felt-edge-squeegee' ],
+		'slug' => 'wrap-vinyl-roll', 'name' => 'Wrap Vinyl, Full Roll', 'cats' => [ 'vinyl-wraps-ppf' ],
+		'badge' => 'Per roll', 'unit' => 'per roll', 'illustration' => true,
+		'short' => 'A full roll of normal wrap vinyl. KSh 50,000.',
+		'desc' => 'A full roll of normal wrap vinyl for wrapping a car. Tell us the colour you want on WhatsApp after you order.',
+		'price' => 50000,
+		'specs' => [ 'Price' => 'KSh 50,000 per roll', 'Type' => 'Normal wrap vinyl' ],
+		'install' => [ 'Order, then tell us the colour on WhatsApp.' ],
+		'upsells' => [ 'vinyl-by-the-metre' ],
+	],
+	// Sound deadening
+	[
+		'slug' => 'sound-deadening-material', 'name' => 'Sound Deadening Material', 'cats' => [ 'sound-deadening' ],
+		'badge' => 'Sound deadening', 'illustration' => true,
+		'short' => 'Sound deadening material for car doors, floors and boots. Ask us for the price.',
+		'desc' => 'Makes the car quieter inside and the sound system clearer. ' . $on_request,
+		'specs' => [ 'For' => 'Doors, floors, boots', 'Price' => 'On request: call or WhatsApp us' ],
+		'install' => [ 'Tell us your car and where you want it on WhatsApp.', 'We send the price and book a time.' ],
+	],
+	// Shop & vehicle branding
+	[
+		'slug' => 'shop-office-branding', 'name' => 'Shop, Office & Wall Branding', 'cats' => [ 'vehicle-branding' ],
+		'badge' => 'Branding',
+		'short' => 'Wall graphics, window branding and signs for shops and offices, like the wall in our studio. Ask us for the price.',
+		'desc' => 'We design, print and fit it. ' . $on_request,
+		'specs' => [ 'Includes' => 'Wall graphics, window branding, signs', 'Price' => 'On request: call or WhatsApp us' ],
+		'install' => [ 'Send photos of the space and your logo on WhatsApp.', 'We send the price and a design.' ],
 	],
 	[
-		'slug' => 'business-cards', 'name' => 'Business Cards', 'cats' => [ 'large-format' ],
-		'badge' => 'Business Printing', 'life' => 'Thick card stock', 'illustration' => true,
-		'short' => 'Full-colour business cards on thick card, designed from your logo or printed from your file.',
-		'desc' => 'Make a strong first impression: we design your business card from your logo and details, or print your ready file, on thick card stock in full colour. Choose single or double-sided and a gloss or matte finish. We send a proof on WhatsApp before printing.',
-		'attr' => 'Quantity', 'options' => [ '100 cards' => 1200, '250 cards' => 2500, '500 cards' => 4000 ],
-		'attr2' => 'Sides', 'options2' => [ 'Single-sided', 'Double-sided' ], 'add2' => [ 'Double-sided' => 30 ],
-		'finishes' => [ 'gloss', 'matte' ], 'pick_finish' => true,
-		'specs' => [ 'Size' => 'Standard 85 × 55 mm', 'Card' => 'Thick card stock', 'Print' => 'Full colour', 'Design' => 'Simple layout included', 'Turnaround' => 'About 1–2 working days after proof approval' ],
-		'install' => [ 'Send your logo, name, title, phone, email and location on WhatsApp.', 'Approve the proof we send back; printing starts after approval.' ],
+		'slug' => 'fleet-tuk-tuk-branding', 'name' => 'Fleet & Tuk-Tuk Branding', 'cats' => [ 'vehicle-branding' ],
+		'badge' => 'Vehicle branding',
+		'short' => 'Branding for tuk-tuks, taxis, vans and company cars, like this tuk-tuk fleet. Ask us for the price.',
+		'desc' => 'We design the layout and brand every vehicle the same way. ' . $on_request,
+		'specs' => [ 'Vehicles' => 'Tuk-tuks, cars, vans, matatus', 'Price' => 'On request: call or WhatsApp us' ],
+		'install' => [ 'Tell us the vehicles and send your logo on WhatsApp.', 'We send the price and a design.' ],
+	],
+	[
+		'slug' => 'car-wraps', 'name' => 'Car Wraps (Full & Partial)', 'cats' => [ 'vehicle-branding' ],
+		'badge' => 'Vehicle branding',
+		'short' => 'Full and partial wraps, like this holographic bonnet. Ask us for the price for your car.',
+		'desc' => 'Change the colour of your car or wrap just the bonnet, roof or mirrors; the paint stays protected underneath. ' . $on_request,
+		'specs' => [ 'Wraps' => 'Full or partial: bonnet, roof, mirrors', 'Price' => 'On request: call or WhatsApp us' ],
+		'install' => [ 'Send a photo of your car and the colour you want on WhatsApp.', 'We send the price and book a time.' ],
+		'upsells' => [ 'wrap-vinyl-roll' ],
+	],
+	[
+		'slug' => 'motorbike-top-box-decals', 'name' => 'Motorbike Graphics & Top Box Decals', 'cats' => [ 'vehicle-branding' ],
+		'badge' => 'Vehicle branding',
+		'short' => 'Graphics for your bike, top box and panniers, like this adventure-bike set. Ask us for the price.',
+		'desc' => 'Mountains, your bike\'s name, your route or your handle, cut in vinyl and fitted. ' . $on_request,
+		'specs' => [ 'For' => 'Motorbikes, top boxes, panniers', 'Price' => 'On request: call or WhatsApp us' ],
+		'install' => [ 'Send a photo of your bike and your idea on WhatsApp.' ],
+	],
+	// Digital printing
+	[
+		'slug' => 'garage-service-tags', 'name' => 'Garage Service Tags', 'cats' => [ 'digital-printing' ],
+		'badge' => 'Digital printing', 'illustration' => true, 'featured' => true,
+		'short' => 'Service reminder tags with your garage name and contacts. 200 for KSh 2,000.',
+		'desc' => 'Hang them on the mirror after every service so customers know when to come back, and who to call.',
+		'attr' => 'Quantity', 'options' => [ '200 tags' => 2000, '400 tags' => 4000 ],
+		'specs' => [ 'Price' => '200 tags KSh 2,000 · 400 tags KSh 4,000', 'Design' => 'With your garage name, phone and logo' ],
+		'install' => [ 'Send your garage name, phone and logo on WhatsApp.', 'Approve the proof; we print.' ],
+	],
+	[
+		'slug' => 'business-cards', 'name' => 'Business Cards', 'cats' => [ 'digital-printing' ],
+		'badge' => 'Digital printing', 'illustration' => true,
+		'short' => 'Business cards in matt, laminated frost or glossy. Ask us for the price.',
+		'desc' => 'We design your card from your logo and details, or print your file. ' . $on_request,
+		'specs' => [ 'Finishes' => 'Matt, laminated frost, glossy', 'Price' => 'On request: call or WhatsApp us' ],
+		'install' => [ 'Send your logo, name, phone and email on WhatsApp.', 'We send the price and a proof.' ],
 		'upsells' => [ 'flyers' ],
 	],
 	[
-		'slug' => 'flyers', 'name' => 'Flyers & Leaflets', 'cats' => [ 'large-format' ],
-		'badge' => 'Business Printing', 'life' => 'Full-colour print', 'illustration' => true,
-		'short' => 'Full-colour flyers for launches, events, menus, offers and church or school notices.',
-		'desc' => 'Promote your business, event or offer with bright full-colour flyers. Send your design or tell us what you need and we lay it out for you. A5 is the popular handout size; A4 suits menus, price lists and notices.',
-		'attr' => 'Quantity', 'options' => [ '100 flyers' => 1500, '500 flyers' => 5000, '1,000 flyers' => 8500 ],
-		'attr2' => 'Size', 'options2' => [ 'A5', 'A4' ], 'add2' => [ 'A4' => 60 ],
-		'specs' => [ 'Sizes' => 'A5 (148 × 210 mm) or A4 (210 × 297 mm)', 'Print' => 'Full colour', 'Paper' => 'Gloss art paper', 'Design' => 'Simple layout included', 'Turnaround' => 'About 1–3 working days' ],
-		'install' => [ 'Send your text, logo and photos on WhatsApp, or a print-ready PDF.', 'Approve the proof; printing starts after approval.' ],
-		'upsells' => [ 'business-cards' ],
+		'slug' => 'flyers', 'name' => 'Flyers', 'cats' => [ 'digital-printing' ],
+		'badge' => 'Digital printing', 'illustration' => true,
+		'short' => 'Flyers in A3, A4 or A5 for events, offers, menus and notices. Ask us for the price.',
+		'desc' => 'Send your design, or tell us what you need and we lay it out. ' . $on_request,
+		'specs' => [ 'Sizes' => 'A3, A4, A5', 'Price' => 'On request: call or WhatsApp us' ],
+		'install' => [ 'Send your text, logo and photos on WhatsApp.', 'We send the price and a proof.' ],
+		'upsells' => [ 'posters' ],
 	],
 	[
-		'slug' => 'certificates', 'name' => 'Certificates', 'cats' => [ 'large-format' ],
-		'badge' => 'Business Printing', 'life' => 'Premium card', 'illustration' => true,
-		'short' => 'Certificates for schools, churches, trainings, awards and events, designed and printed on premium card.',
-		'desc' => 'Award, completion and appreciation certificates with your logo, border and signatures, designed to match your event and printed on heavy card. Send the list of names and we personalise each certificate.',
-		'attr' => 'Quantity', 'options' => [ '10 certificates' => 1500, '25 certificates' => 3000, '50 certificates' => 5500 ],
-		'attr2' => 'Paper', 'options2' => [ 'Standard card', 'Premium textured card' ], 'add2' => [ 'Premium textured card' => 30 ],
-		'specs' => [ 'Size' => 'A4', 'Print' => 'Full colour', 'Names' => 'Personalised from your list', 'Design' => 'Layout with your logo included', 'Turnaround' => 'About 1–3 working days' ],
-		'install' => [ 'Send your logo, wording and the list of names (Excel or a typed list) on WhatsApp.', 'Check the proof carefully for name spellings before we print.' ],
-		'upsells' => [ 'booklet-document-printing' ],
+		'slug' => 'posters', 'name' => 'Posters', 'cats' => [ 'digital-printing' ],
+		'badge' => 'Digital printing', 'illustration' => true,
+		'short' => 'Posters in A3, A4 or A5. Ask us for the price.',
+		'desc' => $on_request,
+		'specs' => [ 'Sizes' => 'A3, A4, A5', 'Price' => 'On request: call or WhatsApp us' ],
+		'install' => [ 'Send your design or idea on WhatsApp.' ],
 	],
 	[
-		'slug' => 'booklet-document-printing', 'name' => 'Booklet & Document Printing', 'cats' => [ 'large-format' ],
-		'badge' => 'Digital Printing', 'life' => 'Bound copies',
-		'short' => 'Manuals, SOPs, reports and company profiles: printed, covered and bound.',
-		'desc' => 'Digital printing for offices and companies, like these standard operating procedure manuals: A4 pages, a colour cover and binding. Prices are for up to 40 pages per copy; send your PDF on WhatsApp for longer documents.',
-		'attr' => 'Copies', 'options' => [ '10 copies' => 3500, '25 copies' => 8000, '50 copies' => 15000 ],
-		'specs' => [ 'Size' => 'A4', 'Pages' => 'Up to 40 per copy at these prices', 'Cover' => 'Full colour', 'Turnaround' => 'Usually 1–3 working days' ],
-		'install' => [ 'Send a PDF so the layout stays exactly as you made it.' ],
-		'upsells' => [ 'product-labels-thank-you-cards' ],
+		'slug' => 'sticker-paper-printing', 'name' => 'Sticker Paper Printing', 'cats' => [ 'digital-printing' ],
+		'badge' => 'Digital printing', 'illustration' => true,
+		'short' => 'Stickers printed on A3, A4 or A5 sticker paper. Ask us for the price.',
+		'desc' => $on_request,
+		'specs' => [ 'Sizes' => 'A3, A4, A5', 'Price' => 'On request: call or WhatsApp us' ],
+		'install' => [ 'Send your design on WhatsApp.' ],
 	],
 	[
-		'slug' => 'felt-edge-squeegee', 'name' => 'Felt-Edge Squeegee Applicator', 'cats' => [ 'tools-care' ],
-		'badge' => 'Tool', 'life' => 'Reusable', 'illustration' => true, 'stock' => 25,
-		'short' => 'The tool we fit with: a firm squeegee with a soft felt edge that won\'t scratch vinyl.',
-		'desc' => 'Press decals down without bubbles or scratches. The felt edge glides over vinyl and tint film.',
-		'price' => 350,
-		'specs' => [ 'Size' => 'About 10 cm wide', 'Edge' => 'Felt, scratch-free' ],
-		'install' => [ 'Hold at about 45° and push from the centre outwards with overlapping strokes.' ],
+		'slug' => 'booklet-document-printing', 'name' => 'Booklets', 'cats' => [ 'digital-printing' ],
+		'badge' => 'Digital printing',
+		'short' => 'Booklets, manuals and company profiles in A4 or A5, like these SOP manuals. Ask us for the price.',
+		'desc' => 'Send your PDF and tell us how many copies. ' . $on_request,
+		'specs' => [ 'Sizes' => 'A4, A5', 'Price' => 'On request: call or WhatsApp us' ],
+		'install' => [ 'Send a PDF on WhatsApp so the layout stays exactly as you made it.' ],
 	],
 	[
-		'slug' => 'microfiber-cloth-pack', 'name' => 'Microfiber Cloth (Pack of 2)', 'cats' => [ 'tools-care' ],
-		'badge' => 'Care', 'life' => 'Washable', 'illustration' => true, 'stock' => 25,
-		'short' => 'Soft, lint-free cloths for cleaning wraps, tint and lamps without scratches.',
-		'desc' => 'The safe way to clean vinyl, wraps, tinted glass and smoked lamps: soft, lint-free and machine washable.',
-		'price' => 400,
-		'specs' => [ 'Pieces' => '2 cloths', 'Size' => 'About 40 × 40 cm' ],
-		'install' => [ 'Use with plain water or a wax-free cleaner.' ],
+		'slug' => 'funeral-programmes', 'name' => 'Funeral Programmes', 'cats' => [ 'digital-printing' ],
+		'badge' => 'Digital printing', 'illustration' => true,
+		'short' => 'Funeral programmes in A4 or A5, designed and printed with care. Ask us for the price.',
+		'desc' => 'Send the photos, the order of service and how many copies you need, and we take care of the layout. ' . $on_request,
+		'specs' => [ 'Sizes' => 'A4, A5', 'Price' => 'On request: call or WhatsApp us' ],
+		'install' => [ 'Send the photos and text on WhatsApp.', 'We send the price and a proof to check.' ],
+	],
+	[
+		'slug' => 'certificates', 'name' => 'Certificates', 'cats' => [ 'digital-printing' ],
+		'badge' => 'Digital printing', 'illustration' => true,
+		'short' => 'Certificates in embossed, glossy or matt, with your logo and names. Ask us for the price.',
+		'desc' => 'For schools, churches, trainings and awards. Send the wording and the list of names. ' . $on_request,
+		'specs' => [ 'Finishes' => 'Embossed, glossy, matt', 'Names' => 'Printed from your list', 'Price' => 'On request: call or WhatsApp us' ],
+		'install' => [ 'Send your logo, wording and the list of names on WhatsApp.', 'Check the proof carefully for spellings.' ],
+	],
+	// Headlight tinting
+	[
+		'slug' => 'headlight-taillight-tint', 'name' => 'Headlight & Back Light Tint', 'cats' => [ 'headlight-tints' ],
+		'badge' => 'Headlight tint', 'illustration' => true, 'featured' => true,
+		'short' => 'Tint film for your front headlights, back lights or both, cut to your lights and fitted at our workshop.',
+		'desc' => 'Choose your vehicle and which lights. We fit it at Rabai Road Estate in about an hour.',
+		'attr' => 'Vehicle', 'attr2' => 'Lights', 'options' => [
+			'Saloon' => [ 'Front headlights' => 1500, 'Back lights' => 1500, 'Front + back' => 3000 ],
+			'SUV'    => [ 'Front headlights' => 2500, 'Back lights' => 2000, 'Front + back' => 4500 ],
+			'Van'    => [ 'Front headlights' => 1500, 'Back lights' => 1500, 'Front + back' => 3000 ],
+		],
+		'specs' => [ 'Vehicles' => 'Saloons, SUVs and vans', 'Fitting' => 'About 1 hour at the workshop' ],
+		'install' => [ 'Order, then WhatsApp or call us to book a time.', 'No car wash for 3 days after fitting.' ],
+		'upsells' => [ 'presidential-ceramic-tint' ],
+	],
+	// Screen printing
+	[
+		'slug' => 'tshirt-printing', 'name' => 'T-Shirt Screen Printing', 'cats' => [ 'screen-printing' ],
+		'badge' => 'Screen printing', 'illustration' => true,
+		'short' => 'T-shirts printed in full colour, one colour, half tone or corporate style. Ask us for the price.',
+		'desc' => 'For events, teams, churches, schools and companies. Tell us the design, how many shirts and the sizes. ' . $on_request,
+		'specs' => [ 'Print' => 'Full colour, one colour, half tone, corporate', 'Price' => 'On request: call or WhatsApp us' ],
+		'install' => [ 'Send your design, the number of shirts and sizes on WhatsApp.', 'We send the price and a mockup.' ],
+		'upsells' => [ 'bag-printing' ],
+	],
+	[
+		'slug' => 'bag-printing', 'name' => 'Bag Printing', 'cats' => [ 'screen-printing' ],
+		'badge' => 'Screen printing', 'illustration' => true,
+		'short' => 'Your logo printed on bags in full colour or one colour. Ask us for the price.',
+		'desc' => 'Branded bags for shops, events and giveaways. ' . $on_request,
+		'specs' => [ 'Print' => 'Full colour or one colour', 'Price' => 'On request: call or WhatsApp us' ],
+		'install' => [ 'Send your logo and how many bags on WhatsApp.' ],
+		'upsells' => [ 'tshirt-printing' ],
 	],
 ];
 
@@ -429,9 +540,9 @@ function sh_local_attr( $name, array $options, $position, $variation = true ) {
 
 $ids = [];
 foreach ( $products as $order => $d ) {
-	$finishes = $d['finishes'] ?? [];
-	$pick     = ! empty( $d['pick_finish'] ) && count( $finishes ) > 1;
 	$variable = ! empty( $d['options'] );
+	$matrix   = $variable && is_array( reset( $d['options'] ) );
+	$second   = $matrix ? array_keys( reset( $d['options'] ) ) : ( $d['options2'] ?? [] );
 	$p = $variable ? new WC_Product_Variable() : new WC_Product_Simple();
 	$p->set_name( $d['name'] );
 	$p->set_slug( $d['slug'] );
@@ -440,40 +551,25 @@ foreach ( $products as $order => $d ) {
 	$p->set_description( $d['desc'] );
 	$p->set_short_description( $d['short'] );
 	$p->set_category_ids( array_map( fn( $c ) => $cat[ $c ], $d['cats'] ) );
-	$p->set_featured( true );
+	$p->set_featured( ! empty( $d['featured'] ) );
 	$p->update_meta_data( '_sh_badge', $d['badge'] );
-	$p->update_meta_data( '_sh_life', $d['life'] );
 	$p->update_meta_data( '_sh_specs', implode( "\n", array_map( fn( $k, $v ) => "$k: $v", array_keys( $d['specs'] ), $d['specs'] ) ) );
 	$p->update_meta_data( '_sh_install', implode( "\n", $d['install'] ) );
+	if ( ! empty( $d['unit'] ) ) $p->update_meta_data( '_sh_unit', $d['unit'] );
+	if ( ! empty( $d['from'] ) ) $p->update_meta_data( '_sh_from', 'yes' );
 	if ( ! empty( $d['illustration'] ) ) $p->update_meta_data( '_sh_illustration', 'yes' );
 
-	$attrs = [];
 	if ( $variable ) {
-		$attrs[] = sh_local_attr( $d['attr'], array_keys( $d['options'] ), 0 );
-		if ( ! empty( $d['options2'] ) ) $attrs[] = sh_local_attr( $d['attr2'], $d['options2'], 1 );
-	}
-	if ( $finishes ) {
-		$a = new WC_Product_Attribute();
-		$a->set_id( wc_attribute_taxonomy_id_by_name( 'finish' ) );
-		$a->set_name( 'pa_finish' );
-		$a->set_options( array_map( fn( $f ) => $finish[ $f ], $finishes ) );
-		$a->set_position( 2 );
-		$a->set_visible( true );
-		$a->set_variation( $pick );
-		$attrs[] = $a;
-	}
-	$p->set_attributes( $attrs );
-	if ( $variable ) {
+		$attrs = [ sh_local_attr( $d['attr'], array_keys( $d['options'] ), 0 ) ];
+		if ( $second ) $attrs[] = sh_local_attr( $d['attr2'], $second, 1 );
+		if ( ! empty( $d['options3'] ) ) $attrs[] = sh_local_attr( $d['attr3'], $d['options3'], 2 );
+		$p->set_attributes( $attrs );
 		$defaults = [ sanitize_title( $d['attr'] ) => array_key_first( $d['options'] ) ];
-		if ( ! empty( $d['options2'] ) ) $defaults[ sanitize_title( $d['attr2'] ) ] = $d['options2'][0];
-		if ( $pick ) $defaults['pa_finish'] = $finishes[0];
+		if ( $second ) $defaults[ sanitize_title( $d['attr2'] ) ] = $second[0];
+		if ( ! empty( $d['options3'] ) ) $defaults[ sanitize_title( $d['attr3'] ) ] = $d['options3'][0];
 		$p->set_default_attributes( $defaults );
-	} else {
+	} elseif ( isset( $d['price'] ) ) {
 		$p->set_regular_price( $d['price'] );
-	}
-	if ( ! empty( $d['stock'] ) ) {
-		$p->set_manage_stock( true );
-		$p->set_stock_quantity( $d['stock'] );
 	}
 	$pid = $p->save();
 	$ids[ $d['slug'] ] = $pid;
@@ -486,24 +582,22 @@ foreach ( $products as $order => $d ) {
 	}
 
 	if ( $variable ) {
-		// One variation per combination: main option × second option × finish (when the customer picks it).
-		$second = $d['options2'] ?? [ null ];
-		$fins   = $pick ? $finishes : [ null ];
-		$key    = sanitize_title( $d['attr'] );
-		$key2   = ! empty( $d['attr2'] ) ? sanitize_title( $d['attr2'] ) : null;
-		$n      = 0;
+		// One variation per combination of the choices.
+		$key  = sanitize_title( $d['attr'] );
+		$key2 = $second ? sanitize_title( $d['attr2'] ) : null;
+		$key3 = ! empty( $d['options3'] ) ? sanitize_title( $d['attr3'] ) : null;
+		$n    = 0;
 		foreach ( $d['options'] as $label => $price ) {
-			foreach ( $second as $o2 ) {
-				foreach ( $fins as $f ) {
+			foreach ( $second ?: [ null ] as $o2 ) {
+				foreach ( $d['options3'] ?? [ null ] as $o3 ) {
 					$va = [ $key => $label ];
 					if ( $o2 !== null ) $va[ $key2 ] = $o2;
-					if ( $f !== null ) $va['pa_finish'] = $f;
-					$add = $f !== null ? ( $d['finish_add'][ $f ] ?? 0 ) : 0;
-					if ( $o2 !== null ) $add += $d['add2'][ $o2 ] ?? 0;
+					if ( $o3 !== null ) $va[ $key3 ] = $o3;
+					$amount = $matrix ? $price[ $o2 ] : $price * ( 1 + ( $o2 !== null ? $d['add2'][ $o2 ] ?? 0 : 0 ) / 100 );
 					$v = new WC_Product_Variation();
 					$v->set_parent_id( $pid );
 					$v->set_attributes( $va );
-					$v->set_regular_price( (string) ( round( $price * ( 1 + $add / 100 ) / 50 ) * 50 ) );
+					$v->set_regular_price( (string) ( round( $amount / 50 ) * 50 ) );
 					$v->set_menu_order( $n++ );
 					$v->save();
 				}
@@ -538,12 +632,12 @@ function sh_page( $slug, $title, $content ) {
 	if ( $existing ) return $existing->ID;
 	return wp_insert_post( [ 'post_type' => 'page', 'post_status' => 'publish', 'post_name' => $slug, 'post_title' => $title, 'post_content' => $content ] );
 }
-sh_page( 'wishlist', 'Your wishlist', "<!-- wp:shortcode -->\n[sh_wishlist]\n<!-- /wp:shortcode -->" );
-sh_page( 'estimator', 'Custom decal & wrap cost estimator', "<!-- wp:paragraph -->\n<p>Pick your project, enter the size or quantity and choose a finish to get an instant estimate. Send it to us on WhatsApp and we confirm the final price after seeing your design.</p>\n<!-- /wp:paragraph -->\n\n<!-- wp:shortcode -->\n[sh_estimator]\n<!-- /wp:shortcode -->" );
+sh_page( 'price-list', 'Price list', "<!-- wp:paragraph -->\n<p>All our prices in one place. Tap any item to order it, or ask us on WhatsApp. Items marked \"Ask for price\" depend on your size and design: send us the details and we reply with the price.</p>\n<!-- /wp:paragraph -->\n\n<!-- wp:shortcode -->\n[sh_price_list]\n<!-- /wp:shortcode -->" );
+sh_page( 'estimator', 'Price calculator', "<!-- wp:paragraph -->\n<p>Work out the price of a banner, stickers or vinyl from its size. Then order it, or send the details to us on WhatsApp.</p>\n<!-- /wp:paragraph -->\n\n<!-- wp:shortcode -->\n[sh_estimator]\n<!-- /wp:shortcode -->" );
 sh_page( 'about', 'About STICKER HUB', '' ); // Content comes from the theme's page-about.html template.
 sh_page( 'faqs', 'FAQs', '' ); // Content comes from page-faqs.html.
 $shop_page = (int) wc_get_page_id( 'shop' );
-if ( $shop_page > 0 ) wp_update_post( [ 'ID' => $shop_page, 'post_title' => 'Decals, wraps & prints' ] );
+if ( $shop_page > 0 ) wp_update_post( [ 'ID' => $shop_page, 'post_title' => 'All products' ] );
 
 update_option( 'permalink_structure', '/%postname%/' );
 flush_rewrite_rules();

@@ -58,6 +58,13 @@
     {
       "step": "runPHP",
       "code": "<?php define( 'SH_FAST', true ); require '/wordpress/sh-setup.php';"
+    },
+    {
+      "step": "setSiteOptions",
+      "options": {
+        "woocommerce_coming_soon": "no",
+        "woocommerce_store_pages_only": "no"
+      }
     }
   ]
 }
