@@ -260,8 +260,8 @@ $products = [
 	// Custom show plates
 	[
 		'slug' => 'car-show-plate', 'name' => 'Custom Car Show Plate', 'cats' => [ 'show-plates' ],
-		'badge' => 'Show plate', 'illustration' => true, 'featured' => true,
-		'short' => 'A custom show plate for your car with the text you want. KSh 1,500 for the front or the back.',
+		'badge' => 'Show plate', 'featured' => true,
+		'short' => 'A custom show plate for your car with the text you want, like METH LAB, RIBCRACKER and GOD\'S GRACE in the photos. KSh 1,500 for the front or the back.',
 		'desc' => 'Tell us the text and style on WhatsApp after you order. Show plates are for car shows, display and private grounds: on public roads your car still needs its official number plates.',
 		'attr' => 'Plate', 'options' => [ 'Front' => 1500, 'Back' => 1500 ],
 		'specs' => [ 'Price' => 'KSh 1,500 each (front or back)', 'Text' => 'Your choice', 'Use' => 'Shows and display, not instead of official plates' ],
@@ -320,8 +320,8 @@ $products = [
 	],
 	[
 		'slug' => 'cnc-cutting', 'name' => 'CNC Cutting Service', 'cats' => [ 'signs-cnc' ],
-		'badge' => 'CNC', 'from' => true, 'illustration' => true,
-		'short' => 'All CNC cutting jobs cost from KSh 1,000 up to KSh 2,000, depending on the design.',
+		'badge' => 'CNC', 'from' => true,
+		'short' => 'Shapes, letters, wheel covers and art cut on our CNC machine, like the pieces in the photos. From KSh 1,000 up to KSh 2,000, depending on the design.',
 		'desc' => 'Letters, logos and shapes cut on our CNC machine from board, perspex or ACP. Send your design on WhatsApp and we confirm the price before cutting.',
 		'price' => 1000,
 		'specs' => [ 'Price' => 'KSh 1,000 – 2,000 per job', 'Materials' => 'Cellular board, forever board, perspex, ACP' ],
@@ -329,7 +329,7 @@ $products = [
 	],
 	[
 		'slug' => 'custom-signs', 'name' => 'Custom Signs (Any Size)', 'cats' => [ 'signs-cnc' ],
-		'badge' => 'Signs', 'illustration' => true,
+		'badge' => 'Signs',
 		'short' => 'Shop, office and building signs made to your size. Ask us for the price.',
 		'desc' => 'From a small door sign to a full shop front: tell us where it goes, the size and your design. ' . $on_request,
 		'specs' => [ 'Size' => 'Any size', 'Materials' => 'Board, perspex, ACP, vinyl', 'Price' => 'On request: call or WhatsApp us' ],
@@ -386,7 +386,7 @@ $products = [
 	[
 		'slug' => 'fleet-tuk-tuk-branding', 'name' => 'Fleet & Tuk-Tuk Branding', 'cats' => [ 'vehicle-branding' ],
 		'badge' => 'Vehicle branding',
-		'short' => 'Branding for tuk-tuks, taxis, vans and company cars, like this tuk-tuk fleet. Ask us for the price.',
+		'short' => 'Branding for trucks, tuk-tuks, vans and company cars, like these UNGA and ABSA trucks and the tuk-tuk fleet. Ask us for the price.',
 		'desc' => 'We design the layout and brand every vehicle the same way. ' . $on_request,
 		'specs' => [ 'Vehicles' => 'Tuk-tuks, cars, vans, matatus', 'Price' => 'On request: call or WhatsApp us' ],
 		'install' => [ 'Tell us the vehicles and send your logo on WhatsApp.', 'We send the price and a design.' ],
@@ -394,7 +394,7 @@ $products = [
 	[
 		'slug' => 'car-wraps', 'name' => 'Car Wraps (Full & Partial)', 'cats' => [ 'vehicle-branding' ],
 		'badge' => 'Vehicle branding',
-		'short' => 'Full and partial wraps, like this holographic bonnet. Ask us for the price for your car.',
+		'short' => 'Full and partial wraps and car branding, like this FAW Trucks car. Ask us for the price for your car.',
 		'desc' => 'Change the colour of your car or wrap just the bonnet, roof or mirrors; the paint stays protected underneath. ' . $on_request,
 		'specs' => [ 'Wraps' => 'Full or partial: bonnet, roof, mirrors', 'Price' => 'On request: call or WhatsApp us' ],
 		'install' => [ 'Send a photo of your car and the colour you want on WhatsApp.', 'We send the price and book a time.' ],
@@ -411,8 +411,8 @@ $products = [
 	// Digital printing
 	[
 		'slug' => 'garage-service-tags', 'name' => 'Garage Service Tags', 'cats' => [ 'digital-printing' ],
-		'badge' => 'Digital printing', 'illustration' => true, 'featured' => true,
-		'short' => 'Service reminder tags with your garage name and contacts. 200 for KSh 2,000.',
+		'badge' => 'Digital printing', 'featured' => true,
+		'short' => 'Service reminder tags with your garage name and contacts, like these for Rupal Racing. 200 for KSh 2,000.',
 		'desc' => 'Hang them on the mirror after every service so customers know when to come back, and who to call.',
 		'attr' => 'Quantity', 'options' => [ '200 tags' => 2000, '400 tags' => 4000 ],
 		'specs' => [ 'Price' => '200 tags KSh 2,000 · 400 tags KSh 4,000', 'Design' => 'With your garage name, phone and logo' ],
@@ -420,7 +420,7 @@ $products = [
 	],
 	[
 		'slug' => 'business-cards', 'name' => 'Business Cards', 'cats' => [ 'digital-printing' ],
-		'badge' => 'Digital printing', 'illustration' => true,
+		'badge' => 'Digital printing',
 		'short' => 'Business cards in matt, laminated frost or glossy. Ask us for the price.',
 		'desc' => 'We design your card from your logo and details, or print your file. ' . $on_request,
 		'specs' => [ 'Finishes' => 'Matt, laminated frost, glossy', 'Price' => 'On request: call or WhatsApp us' ],
@@ -479,7 +479,7 @@ $products = [
 	// Headlight tinting
 	[
 		'slug' => 'headlight-taillight-tint', 'name' => 'Headlight & Back Light Tint', 'cats' => [ 'headlight-tints' ],
-		'badge' => 'Headlight tint', 'illustration' => true, 'featured' => true,
+		'badge' => 'Headlight tint', 'featured' => true,
 		'short' => 'Tint film for your front headlights, back lights or both, cut to your lights and fitted at our workshop.',
 		'desc' => 'Choose your vehicle and which lights. We fit it at Rabai Road Estate in about an hour.',
 		'attr' => 'Vehicle', 'attr2' => 'Lights', 'options' => [
@@ -494,7 +494,7 @@ $products = [
 	// Screen printing
 	[
 		'slug' => 'tshirt-printing', 'name' => 'T-Shirt Screen Printing', 'cats' => [ 'screen-printing' ],
-		'badge' => 'Screen printing', 'illustration' => true,
+		'badge' => 'Screen printing',
 		'short' => 'T-shirts printed in full colour, one colour, half tone or corporate style. Ask us for the price.',
 		'desc' => 'For events, teams, churches, schools and companies. Tell us the design, how many shirts and the sizes. ' . $on_request,
 		'specs' => [ 'Print' => 'Full colour, one colour, half tone, corporate', 'Price' => 'On request: call or WhatsApp us' ],
@@ -503,7 +503,7 @@ $products = [
 	],
 	[
 		'slug' => 'bag-printing', 'name' => 'Bag Printing', 'cats' => [ 'screen-printing' ],
-		'badge' => 'Screen printing', 'illustration' => true,
+		'badge' => 'Screen printing',
 		'short' => 'Your logo printed on bags in full colour or one colour. Ask us for the price.',
 		'desc' => 'Branded bags for shops, events and giveaways. ' . $on_request,
 		'specs' => [ 'Print' => 'Full colour or one colour', 'Price' => 'On request: call or WhatsApp us' ],
