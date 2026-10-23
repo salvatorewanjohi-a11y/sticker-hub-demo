@@ -180,7 +180,7 @@ $products = [
 	// Nano ceramic tints
 	[
 		'slug' => 'presidential-ceramic-tint', 'name' => 'Black Presidential Nano Ceramic Tint', 'cats' => [ 'ceramic-tints' ],
-		'badge' => 'Nano ceramic tint', 'illustration' => true, 'featured' => true,
+		'badge' => 'Nano ceramic tint', 'featured' => true,
 		'short' => 'Nano ceramic window tint that keeps your car cooler and cuts glare. Choose your vehicle, the windows and the shade: 5% is very dark, 45% is very light.',
 		'desc' => 'Fitted by us at the workshop on Rabai Road Estate. "Whole car" is the windscreen and all the other windows together. Before choosing a dark shade for the windscreen or front windows, please check the NTSA rules for your vehicle.',
 		'attr' => 'Vehicle', 'attr2' => 'Windows', 'options' => [
@@ -242,7 +242,7 @@ $products = [
 	],
 	[
 		'slug' => 'uv-stickers', 'name' => 'UV Stickers', 'cats' => [ 'stickers-decals' ],
-		'badge' => 'UV printed', 'illustration' => true,
+		'badge' => 'UV printed',
 		'short' => 'UV printed stickers with bright, raised colours. KSh 3,500.',
 		'desc' => 'Send us your design or logo on WhatsApp and tell us the size and quantity you need; we confirm everything before printing.',
 		'price' => 3500,
@@ -270,7 +270,7 @@ $products = [
 	],
 	[
 		'slug' => 'bike-show-plate', 'name' => 'Custom Bike Show Plate', 'cats' => [ 'show-plates' ],
-		'badge' => 'Show plate', 'illustration' => true,
+		'badge' => 'Show plate',
 		'short' => 'A custom show plate for your motorbike in yellow or white. KSh 1,000.',
 		'desc' => 'Tell us the text you want on WhatsApp after you order. Show plates are for shows and display: on public roads your bike still needs its official number plate.',
 		'attr' => 'Colour', 'options' => [ 'Yellow' => 1000, 'White' => 1000 ],
@@ -279,7 +279,7 @@ $products = [
 	],
 	[
 		'slug' => 'usa-custom-plate', 'name' => 'USA & Foreign Custom Plate', 'cats' => [ 'show-plates' ],
-		'badge' => 'Show plate', 'illustration' => true,
+		'badge' => 'Show plate',
 		'short' => 'A USA-style custom plate in any design you choose. KSh 2,500.',
 		'desc' => 'Pick any American state style (or another country) and your own text. Send us a picture of the style you like on WhatsApp. For display and shows only.',
 		'price' => 2500,
@@ -289,7 +289,7 @@ $products = [
 	// Signs & CNC services
 	[
 		'slug' => 'cellular-forever-board', 'name' => 'Cellular & Forever Board Signs', 'cats' => [ 'signs-cnc' ],
-		'badge' => 'Signs', 'illustration' => true,
+		'badge' => 'Signs',
 		'short' => 'Signs and cut letters on cellular board (8 mm or 18 mm) or 3 mm forever board, made to your size.',
 		'desc' => 'Light, strong boards for shop signs, office signs, 3D letters and displays. Tell us the size and design on WhatsApp and we confirm the final price for your sign.',
 		'attr' => 'Board', 'options' => [ '3 mm forever board' => 1500, '8 mm cellular board' => 4000, '18 mm cellular board' => 6500 ],
@@ -299,7 +299,7 @@ $products = [
 	],
 	[
 		'slug' => 'perspex-acrylic', 'name' => 'Perspex (Acrylic), Any Colour', 'cats' => [ 'signs-cnc' ],
-		'badge' => 'Signs', 'illustration' => true,
+		'badge' => 'Signs',
 		'short' => 'Perspex in any colour for signs, letters and displays: 3 mm, 5 mm or 10 mm thick.',
 		'desc' => 'Glossy, strong perspex for signs, reception logos, name plates and displays, cut to shape on our CNC. Tell us the size and design on WhatsApp.',
 		'attr' => 'Thickness', 'options' => [ '3 mm' => 4000, '5 mm' => 13000, '10 mm' => 24000 ],
@@ -357,7 +357,7 @@ $products = [
 	],
 	[
 		'slug' => 'wrap-vinyl-roll', 'name' => 'Wrap Vinyl, Full Roll', 'cats' => [ 'vinyl-wraps-ppf' ],
-		'badge' => 'Per roll', 'unit' => 'per roll', 'illustration' => true,
+		'badge' => 'Per roll', 'unit' => 'per roll',
 		'short' => 'A full roll of normal wrap vinyl. KSh 50,000.',
 		'desc' => 'A full roll of normal wrap vinyl for wrapping a car. Tell us the colour you want on WhatsApp after you order.',
 		'price' => 50000,
@@ -368,7 +368,7 @@ $products = [
 	// Sound deadening
 	[
 		'slug' => 'sound-deadening-material', 'name' => 'Sound Deadening Material', 'cats' => [ 'sound-deadening' ],
-		'badge' => 'Sound deadening', 'illustration' => true,
+		'badge' => 'Sound deadening',
 		'short' => 'Sound deadening material for car doors, floors and boots. Ask us for the price.',
 		'desc' => 'Makes the car quieter inside and the sound system clearer. ' . $on_request,
 		'specs' => [ 'For' => 'Doors, floors, boots', 'Price' => 'On request: call or WhatsApp us' ],
@@ -446,7 +446,7 @@ $products = [
 	],
 	[
 		'slug' => 'sticker-paper-printing', 'name' => 'Sticker Paper Printing', 'cats' => [ 'digital-printing' ],
-		'badge' => 'Digital printing', 'illustration' => true,
+		'badge' => 'Digital printing',
 		'short' => 'Stickers printed on A3, A4 or A5 sticker paper. Ask us for the price.',
 		'desc' => $on_request,
 		'specs' => [ 'Sizes' => 'A3, A4, A5', 'Price' => 'On request: call or WhatsApp us' ],
