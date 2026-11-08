@@ -167,7 +167,7 @@ update_option( 'woocommerce_gateway_order', [ 'bacs' => 0, 'cod' => 1, 'cheque' 
 // 'attr2' / 'options2' with 'add2' => [ label2 => % ] adds a percentage instead; 'attr3' / 'options3' is an extra
 // choice that doesn't change the price. 'unit' follows the price ("per m²"), 'from' => true puts "From" before it.
 // Made to order, so stock isn't tracked.
-$on_request = 'Tell us what you need on WhatsApp or call 0766 386 934 / 0117 770 679 and we send the price.';
+$on_request = 'Tell us what you need on WhatsApp or call 0766 386 934 (Nairobi) or 0117 770 679 (Mombasa) and we send the price.';
 $products = [
 	// Large format printing
 	[
