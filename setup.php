@@ -167,7 +167,7 @@ update_option( 'woocommerce_gateway_order', [ 'bacs' => 0, 'cod' => 1, 'cheque' 
 // 'attr2' / 'options2' with 'add2' => [ label2 => % ] adds a percentage instead; 'attr3' / 'options3' is an extra
 // choice that doesn't change the price. 'unit' follows the price ("per m²"), 'from' => true puts "From" before it.
 // Made to order, so stock isn't tracked.
-$on_request = 'Tell us what you need on WhatsApp or call 0766 386 934 and we send the price.';
+$on_request = 'Tell us what you need on WhatsApp or call 0766 386 934 / 0117 770 679 and we send the price.';
 $products = [
 	// Large format printing
 	[
@@ -655,7 +655,9 @@ foreach ( $products as $order => $d ) {
 					$v = new WC_Product_Variation();
 					$v->set_parent_id( $pid );
 					$v->set_attributes( $va );
-					$v->set_regular_price( (string) ( round( $amount / 50 ) * 50 ) );
+					// Only a percentage add-on ('add2') is rounded to the nearest 50; listed prices stay exact (A5 flyers are KSh 6).
+					$pct = ! $matrix && $o2 !== null && ! empty( $d['add2'][ $o2 ] );
+					$v->set_regular_price( (string) ( $pct ? round( $amount / 50 ) * 50 : $amount ) );
 					$v->set_menu_order( $n++ );
 					$v->save();
 				}
