@@ -81,17 +81,19 @@ if ( $sample ) wp_delete_post( $sample->ID, true );
 $cat = [];
 $i   = 0;
 foreach ( [
-	'large-format'     => [ 'Large Format Printing', 'Banners, one way vision, clear, frost, satin, hologram and light box prints, printed in-house and priced per square metre.' ],
+	'large-format'     => [ 'Large Format Printing', 'Banners, one way vision, clear, frost, satin, hologram and light box prints, printed in-house and priced per square metre, and canvas prints.' ],
 	'ceramic-tints'    => [ 'Nano Ceramic Tints', 'Black presidential and chameleon nano ceramic window tint for saloons, SUVs and vans, fitted at our workshop.' ],
 	'stickers-decals'  => [ 'Stickers, Decals & Product Labels', 'Printed stickers and product labels by the square metre, custom names and decals, quarter panel window stickers, UV and dome stickers.' ],
 	'show-plates'      => [ 'Custom Show Plates', 'Custom show plates for cars and bikes, and USA-style plates with any text you like.' ],
-	'signs-cnc'        => [ 'Signs & CNC Services', 'Signs made to your size on cellular board, forever board, perspex and aluminium composite panel, and CNC cutting.' ],
+	'signs-cnc'        => [ 'Signs & CNC Services', 'Signs made to your size on cellular board, forever board, perspex and aluminium composite panel, neon signs, 3D signs, door signs and engraving, and CNC cutting.' ],
 	'vinyl-wraps-ppf'  => [ 'Vinyl, Wraps & PPF Sales', 'Vinyl by the metre (normal colours, chrome, hologram, glitter, luminous, 3D carbon fibre, AK47), full wrap rolls and PPF.' ],
 	'sound-deadening'  => [ 'Sound Deadening Material', 'Sound deadening material for car doors, floors and boots.' ],
 	'vehicle-branding' => [ 'Shop & Vehicle Branding', 'Branding for shops, offices and walls, and for fleets, tuk-tuks, cars and bikes: designed, printed and fitted by us.' ],
 	'digital-printing' => [ 'Digital Printing', 'Garage service tags, flyers, posters, sticker paper, booklets, business cards, funeral programmes and certificates.' ],
 	'headlight-tints'  => [ 'Headlight Tinting', 'Front and back light tint for saloons, SUVs and vans, cut and fitted at our workshop.' ],
 	'screen-printing'  => [ 'Screen Printing', 'T-shirts and bags, screen printed in full colour, one colour, half tone or corporate style.' ],
+	// Added 2026-11-08 (Jacinta): bike rims are their own category, not CNC cutting.
+	'bike-rims'        => [ 'Bike Rims', 'Custom bike rim covers cut on our CNC machine in your design and colours.' ],
 ] as $slug => [ $name, $desc ] ) {
 	$t = term_exists( $slug, 'product_cat' ) ?: wp_insert_term( $name, 'product_cat', [ 'slug' => $slug, 'description' => $desc ] );
 	$cat[ $slug ] = (int) $t['term_id'];
@@ -177,6 +179,14 @@ $products = [
 		'specs' => [ 'Price' => 'Per square metre (1 m × 1 m)', 'Materials' => 'White, black back banner, light box, one way vision, clear, frost, satin, hologram', 'One way vision' => 'Printed outside, see-through from inside: for shop and car windows', 'Design' => 'Send your file, or we design it for you' ],
 		'install' => [ 'Pick the material and enter the square metres as the quantity.', 'Send your design (or your idea) on WhatsApp after you order.', 'We send a proof, print it and call you when it is ready.' ],
 	],
+	[
+		'slug' => 'canvas-printing', 'name' => 'Canvas Printing', 'cats' => [ 'large-format' ],
+		'badge' => 'Canvas print',
+		'short' => 'Your photo or artwork printed on canvas for your wall, home or office, like this G-Wagon art. Ask us for the price.',
+		'desc' => 'Send us the picture and the size you want. ' . $on_request,
+		'specs' => [ 'Print' => 'Your photo, artwork or design', 'Size' => 'Made to your size', 'Price' => 'On request: call or WhatsApp us' ],
+		'install' => [ 'Send the picture and size on WhatsApp.', 'We send the price and a proof before printing.' ],
+	],
 	// Nano ceramic tints
 	[
 		'slug' => 'presidential-ceramic-tint', 'name' => 'Black Presidential Nano Ceramic Tint', 'cats' => [ 'ceramic-tints' ],
@@ -196,10 +206,11 @@ $products = [
 	[
 		'slug' => 'chameleon-ceramic-tint', 'name' => 'Chameleon Nano Ceramic Tint', 'cats' => [ 'ceramic-tints' ],
 		'badge' => 'Nano ceramic tint',
-		'short' => 'Colour-shifting tint in Purple Pink, Sunset Red, Blue Purple or Green Yellow, like the one on this van. Call or WhatsApp us for the price for your car.',
-		'desc' => 'Chameleon tint changes colour as the light and your angle change. Ask us which windows it can go on for your vehicle and the price. ' . $on_request,
-		'specs' => [ 'Colours' => 'Purple Pink, Sunset Red, Blue Purple, Green Yellow', 'Price' => 'On request: call or WhatsApp us', 'Fitting' => 'At our Rabai Road workshop' ],
-		'install' => [ 'Tell us your car and the colour you like on WhatsApp.', 'We send the price and book a fitting time.' ],
+		'price' => 7000,
+		'short' => 'Colour-shifting tint in Purple Pink, Sunset Red, Blue Purple or Green Yellow, like the one on this van. KSh 7,000.',
+		'desc' => 'Chameleon tint changes colour as the light and your angle change. Ask us which windows it can go on for your vehicle.',
+		'specs' => [ 'Price' => 'KSh 7,000', 'Colours' => 'Purple Pink, Sunset Red, Blue Purple, Green Yellow', 'Fitting' => 'At our Rabai Road workshop' ],
+		'install' => [ 'Order, then tell us your car and the colour you like on WhatsApp.', 'We book a fitting time at the workshop.' ],
 		'upsells' => [ 'presidential-ceramic-tint' ],
 	],
 	// Stickers, decals & product labels
@@ -243,7 +254,7 @@ $products = [
 	[
 		'slug' => 'uv-stickers', 'name' => 'UV Stickers', 'cats' => [ 'stickers-decals' ],
 		'badge' => 'UV printed',
-		'short' => 'UV printed stickers with bright, raised colours. KSh 3,500.',
+		'short' => 'UV printed stickers with bright, raised colours, like these Biraori Fixes stickers. KSh 3,500.',
 		'desc' => 'Send us your design or logo on WhatsApp and tell us the size and quantity you need; we confirm everything before printing.',
 		'price' => 3500,
 		'specs' => [ 'Price' => 'KSh 3,500', 'Proof' => 'Sent on WhatsApp before printing' ],
@@ -251,8 +262,8 @@ $products = [
 	],
 	[
 		'slug' => 'dome-stickers', 'name' => 'Dome Stickers (3D Resin)', 'cats' => [ 'stickers-decals' ],
-		'badge' => '3D dome stickers', 'illustration' => true,
-		'short' => 'Your logo printed and topped with a clear, raised resin dome: glossy, 3D and tough. Ask us for the price.',
+		'badge' => '3D dome stickers',
+		'short' => 'Your logo printed and topped with a clear, raised resin dome: glossy, 3D and tough, like these Khalifa Crafted and AMG labels. Ask us for the price.',
 		'desc' => 'Dome stickers are printed stickers coated with clear resin that sets into a raised, glossy dome. Great for cars, bikes, helmets, products and giveaways. ' . $on_request,
 		'specs' => [ 'Look' => 'Raised 3D gloss', 'Shapes' => 'Round, square, oval or cut to your logo', 'Price' => 'On request: call or WhatsApp us' ],
 		'install' => [ 'Send your logo, the size and how many you need on WhatsApp.', 'We send the price and a proof before printing.' ],
@@ -321,7 +332,7 @@ $products = [
 	[
 		'slug' => 'cnc-cutting', 'name' => 'CNC Cutting Service', 'cats' => [ 'signs-cnc' ],
 		'badge' => 'CNC', 'from' => true,
-		'short' => 'Shapes, letters, wheel covers and art cut on our CNC machine, like the pieces in the photos. From KSh 1,000 up to KSh 2,000, depending on the design.',
+		'short' => 'Shapes, letters and art cut on our CNC machine, like the pieces in the photos. From KSh 1,000 up to KSh 2,000, depending on the design.',
 		'desc' => 'Letters, logos and shapes cut on our CNC machine from board, perspex or ACP. Send your design on WhatsApp and we confirm the price before cutting.',
 		'price' => 1000,
 		'specs' => [ 'Price' => 'KSh 1,000 – 2,000 per job', 'Materials' => 'Cellular board, forever board, perspex, ACP' ],
@@ -334,6 +345,32 @@ $products = [
 		'desc' => 'From a small door sign to a full shop front: tell us where it goes, the size and your design. ' . $on_request,
 		'specs' => [ 'Size' => 'Any size', 'Materials' => 'Board, perspex, ACP, vinyl', 'Price' => 'On request: call or WhatsApp us' ],
 		'install' => [ 'Send a photo of the wall or shop front and your logo on WhatsApp.', 'We send the price and a design.' ],
+	],
+	// Added 2026-11-08 (Jacinta): neon signs, 3D signs, door signs and engraving go under Signs & CNC.
+	[
+		'slug' => 'neon-signs', 'name' => 'Neon Signs', 'cats' => [ 'signs-cnc' ],
+		'badge' => 'Signs',
+		'short' => 'LED neon signs in your words, logo or shape, for shops, bars, events and homes. Ask us for the price.',
+		'desc' => 'Tell us the words or send the logo, the size and the colours. ' . $on_request,
+		'specs' => [ 'Design' => 'Your words, logo or shape', 'Colours' => 'Your choice', 'Price' => 'On request: call or WhatsApp us' ],
+		'install' => [ 'Send your design and size on WhatsApp.', 'We send the price and a preview.' ],
+	],
+	[
+		'slug' => '3d-signs', 'name' => '3D Signs', 'cats' => [ 'signs-cnc' ],
+		'badge' => 'Signs',
+		'short' => 'Raised 3D letters and lit signs for shop fronts, schools and offices, like this Lakewood Vantage sign. Ask us for the price.',
+		'desc' => 'Tell us where the sign goes, the size and the words or logo. ' . $on_request,
+		'specs' => [ 'Letters' => '3D raised, lit or unlit', 'Size' => 'Made to your size', 'Price' => 'On request: call or WhatsApp us' ],
+		'install' => [ 'Send a photo of the wall and your logo on WhatsApp.', 'We send the price and a design.' ],
+		'upsells' => [ 'neon-signs' ],
+	],
+	[
+		'slug' => 'door-signs-engraving', 'name' => 'Door Signs & Engraving', 'cats' => [ 'signs-cnc' ],
+		'badge' => 'Signs',
+		'short' => 'House numbers, door signs and name plates, engraved and cut on our CNC, like this 337A France Lane sign. Ask us for the price.',
+		'desc' => 'Tell us the text, the size and the colours you want. ' . $on_request,
+		'specs' => [ 'For' => 'House numbers, doors, offices, name plates', 'Made on' => 'Our CNC machine', 'Price' => 'On request: call or WhatsApp us' ],
+		'install' => [ 'Send the text and size on WhatsApp.', 'We send the price and a preview.' ],
 	],
 	// Vinyl, wraps & PPF sales
 	[
@@ -368,11 +405,12 @@ $products = [
 	// Sound deadening
 	[
 		'slug' => 'sound-deadening-material', 'name' => 'Sound Deadening Material', 'cats' => [ 'sound-deadening' ],
-		'badge' => 'Sound deadening',
-		'short' => 'Sound deadening material for car doors, floors and boots. Ask us for the price.',
-		'desc' => 'Makes the car quieter inside and the sound system clearer. ' . $on_request,
-		'specs' => [ 'For' => 'Doors, floors, boots', 'Price' => 'On request: call or WhatsApp us' ],
-		'install' => [ 'Tell us your car and where you want it on WhatsApp.', 'We send the price and book a time.' ],
+		'badge' => 'Per sheet', 'unit' => 'per sheet',
+		'price' => 1000,
+		'short' => 'Sound deadening material for car doors, floors and boots. KSh 1,000 per sheet.',
+		'desc' => 'Makes the car quieter inside and the sound system clearer. Set the quantity to the number of sheets; not sure how many your car needs? Ask us on WhatsApp.',
+		'specs' => [ 'Price' => 'KSh 1,000 per sheet', 'For' => 'Doors, floors, boots' ],
+		'install' => [ 'Enter the number of sheets as the quantity.', 'Tell us your car on WhatsApp if you want it fitted.' ],
 	],
 	// Shop & vehicle branding
 	[
@@ -509,6 +547,16 @@ $products = [
 		'specs' => [ 'Print' => 'Full colour or one colour', 'Price' => 'On request: call or WhatsApp us' ],
 		'install' => [ 'Send your logo and how many bags on WhatsApp.' ],
 		'upsells' => [ 'tshirt-printing' ],
+	],
+	// Bike rims (Jacinta, 2026-11-08: KSh 5,500, its own category).
+	[
+		'slug' => 'bike-rim-covers', 'name' => 'Custom Bike Rim Covers', 'cats' => [ 'bike-rims' ],
+		'badge' => 'Bike rims', 'featured' => true,
+		'short' => 'Custom rim covers for your bike, cut on our CNC in your design and colours, like the ones in the photos. KSh 5,500.',
+		'desc' => 'Pick a design from our work or send your own, and tell us your bike and rim size on WhatsApp after you order.',
+		'price' => 5500,
+		'specs' => [ 'Price' => 'KSh 5,500', 'Design' => 'From our designs or your own', 'Made on' => 'Our CNC machine' ],
+		'install' => [ 'Order, then send your bike, rim size and design on WhatsApp.', 'We confirm the design before cutting.' ],
 	],
 ];
 
